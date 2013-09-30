@@ -35,3 +35,19 @@ function rot13(str) {   // An easy-to understand implementation of the famous an
     }
     return retVal;
 }
+
+
+function displayfiller(oldStr, zeroForm) {
+    var newStr = "";
+    
+    if (oldStr.length > zeroForm.length) {
+    	newStr = oldStr;
+    } 
+    else {
+        for (var i = 0; i < zeroForm.length - oldStr.length; i++) {
+        	newStr += zeroForm.charAt(i);
+        }
+        newStr += oldStr;
+    }
+    return newStr;
+}
