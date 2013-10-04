@@ -3,7 +3,7 @@
 <head>
 
    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-   <meta name="author"             content="Alan G. Labouseur" />
+   <meta name="author"             content="Andrew Lohr" />
    <link rel="stylesheet" href="austinizer.css" type="text/css" media="screen" />
    <title>
       Austinizer - a Browser-based virtual Operating System
@@ -26,6 +26,10 @@
    <script type="text/javascript" src="scripts/os/queue.js"></script>
    <script type="text/javascript" src="scripts/os/shell.js"></script>
    <script type="text/javascript" src="scripts/os/kernel.js"></script>
+   <script type="text/javascript" src="scripts/os/programLoad.js"></script>
+   <script type="text/javascript" src="scripts/os/mainMemory.js"></script>
+   <script type="text/javascript" src="scripts/os/pcb.js"></script>
+   <script type="text/javascript" src="scripts/os/memoryManagement.js"></script>
    
    <!-- Other Routines -->
    <script type="text/javascript" src="scripts/utils.js"></script>
@@ -66,6 +70,7 @@
 
 <div id="status" style="margin-left:4px; width:350px;height:19px;"></div>
 <div style="margin-left:4px;">Status</div>
+
 <div id='userStatus' style=" margin-left:4px; width:150px;height:19px;border:2px solid blue;"></div>
    <div id="divConsole" style="margin:4px; width:500px; height:500px; float:left;">
       <canvas id="display"
@@ -75,6 +80,7 @@
       </canvas>
    </div>
    
+   
    <div id="HiddenDivConsole" style=" display:none;margin:4px; width:500px; height:500px; float:left;">
       <canvas id="hiddenDisplay"
               width="500px"
@@ -82,17 +88,13 @@
               tabindex="3">
       </canvas>
    </div>
-   
    <div id="divLog" style="margin-left:520px;">
-      <label>
-         Log
-         <br>
          <textarea name="taLog"
                    id  ="taLog"
                    rows="26"
                    cols="48"
          ></textarea>
-      </label>
+      
       <div id="location" style="float:right">Map</div>
    </div>
    
@@ -107,9 +109,12 @@
                    cols="48"
          ></textarea>
       </label>
+      
    </div>
 
 </div>
+<div style="margin-left:4px;">Memory</div>
+<div id='MemoryDisplay' style="margin-left:4px;"></div>
 
 
 

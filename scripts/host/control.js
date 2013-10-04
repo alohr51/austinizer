@@ -33,6 +33,12 @@ function hostInit()
 	//buffer canvas for scrolling
 	 _CanvasBuffer = document.getElementById('hiddenDisplay');
 	 _ContexBuffer = _CanvasBuffer.getContext('2d');
+	 
+	//Setup Memory constants
+	_memoryManagement = new memoryManagement();
+	_mainMem = new mainMemory();
+	_mainMem.init();
+	_mainMem.display();
 	
 	// Clear the log text box.
 	document.getElementById("taLog").value="";
