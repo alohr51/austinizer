@@ -41,7 +41,7 @@ function shellInit() {
     // shutdown
     sc = new ShellCommand();
     sc.command = "shutdown";
-    sc.description = "- Shuts down the virtual OS but leaves the underlying hardware simulation running.";
+    sc.description = "- Shuts down os, but leaves HW sim running";
     sc.func = shellShutdown;
     this.commandList[this.commandList.length] = sc;
 
@@ -113,6 +113,24 @@ function shellInit() {
     sc.func = stateList;
     this.commandList[this.commandList.length]=sc;
     
+    //austinizer command. 
+    sc = new ShellCommand();
+    sc.command ="austin";
+    sc.description = "-Austin Powers. Danger is my middle name.";
+    sc.func = function(){
+    	if(_Austin){
+    		_StdIn.putText("Who turns off Austin? Honestly! Bye!");
+    		_Austin = false;
+    	}
+    	else{
+    	//play audio clip
+    	document.getElementById("swinger").play();
+    	_StdIn.putText("I put the GRR in swingger baby! Austin Time!");
+    	_Austin = true;
+    	}
+    };
+    this.commandList[this.commandList.length]=sc;
+    
     //load
     sc = new ShellCommand();
     sc.command ="load";
@@ -134,11 +152,20 @@ function shellInit() {
     		//store in core memory
     		_memoryManagement.storeProgram(inputArray);
     		_coreMem.display();
-    		_StdIn.putText("Program loaded with PID: "+pid);
-    		
+    		if(_Austin){
+    			_StdIn.putText("Yeah baby yeah! Program locked and loaded with PID: "+pid);
+    		}
+    		else{
+    			_StdIn.putText("Program loaded with PID: "+pid);
+    		}
     	}
     	else{
-    		alert("Error: Check Hex input. Only Hex values are allowed.");
+    		if(_Austin){
+    			_StdIn.putText("This sort of Hex isn't my bag baby! Try only hex values!");
+    		}
+    		else{
+    		_StdIn.putText("Error: Check Hex input. Only Hex values are allowed.");
+    		}
     	}
     };
     this.commandList[this.commandList.length]=sc;
@@ -149,7 +176,12 @@ function shellInit() {
     sc.description = " <int>- Runs the program with a PID";
     sc.func = function(args){
     	if(args == ''){
-    		StdIn.putText("please enter a PID");
+    		if(_Austin){
+    			StdIn.putText("Ouch Kabibbles! Try entering a PID parameter!");
+    		}
+    		else{
+    			StdIn.putText("please enter a PID");
+    		}
     	}
     	else{
     		_currentPCB = readyQueue[args];
@@ -177,8 +209,14 @@ function shellInit() {
     sc.description=" - shows your location on a google map.";
     sc.func = function(){
     	getLocation();
-    	_StdIn.putText("You are wherever the map on the right says you are.");
+    	if(_Austin){
+    		_StdIn.putText("Smashing! Look at me over there baby! yeah!");
+    	}
+    	else{
+    	_StdIn.putText("Check the Map for your location.");
+    }
     };
+    
    this.commandList[this.commandList.length]=sc;
     
     // processes - list the running processes and their IDs
@@ -319,9 +357,9 @@ function UserCommand()
 function shellInvalidCommand()
 {
     _StdIn.putText("Invalid Command. ");
-    if (_SarcasticMode)
+    if (_Austin)
     {
-        _StdIn.putText("Duh. Go back to your Speak & Spell.");
+        _StdIn.putText("OH Behave!!");
     }
     else
     {
@@ -349,7 +387,12 @@ function shellApology()
 
 function shellVer(args)
 {
-    _StdIn.putText(APP_NAME + " version " + APP_VERSION);    
+	if(_Austin){
+		_StdIn.putText("Allow myself to introduce...myself: "+APP_NAME + " version " + APP_VERSION);
+	}
+	else{
+		_StdIn.putText(APP_NAME + " version " + APP_VERSION);    
+}
 }
 
 function shellHelp(args)
@@ -364,9 +407,15 @@ function shellHelp(args)
 
 function shellShutdown(args)
 {
-     _StdIn.putText("Shutting down...");
-     // Call Kernel shutdown routine.
-    krnShutdown();   
+	if(_Austin){
+		_StdIn.putText("I will stop the shutdown for...1 MILLION DOLLARS!");
+	}
+	else{
+		_StdIn.putText("Shutting down...");
+     
+	}
+	krnShutdown();  
+	// Call Kernel shutdown routine. 
     // TODO: Stop the final prompt from being displayed.  If possible.  Not a high priority.  (Damn OCD!)
 }
 
@@ -383,9 +432,15 @@ function shellMan(args)
         var topic = args[0];
         switch (topic)
         {
-            case "help": 
-                _StdIn.putText("Help displays a list of (hopefully) valid commands.");
-                break;
+            case "help":
+            	if(_Austin){
+            		_StdIn.putText("Help take down Dr. Evil with these vaild commands!");
+            		break;
+            	}
+            	else{
+            		_StdIn.putText("Help displays a list of (hopefully) valid commands.");
+            		break;
+            	}
             default:
                 _StdIn.putText("No manual entry for " + args[0] + ".");
         }        
@@ -403,10 +458,11 @@ function shellTrace(args)
         var setting = args[0];
         switch (setting)
         {
+        	//parameter on is entered
             case "on": 
-                if (_Trace && _SarcasticMode)
+                if (_Trace && _Austin)
                 {
-                    _StdIn.putText("Trace is already on, dumbass.");
+                    _StdIn.putText("I'm already turned on, oops I mean Trace. Yeah Baby Yeah!");
                 }
                 else
                 {
@@ -415,12 +471,24 @@ function shellTrace(args)
                 }
                 
                 break;
+            //parameter off is entered    
             case "off": 
                 _Trace = false;
-                _StdIn.putText("Trace OFF");                
-                break;                
+                if(_Austin){
+                	_StdIn.putText("Smashing Baby! Trace is turned off."); 
+                	break;
+                }
+                else{
+                	_StdIn.putText("Trace OFF");                
+                	break;
+                }
             default:
-                _StdIn.putText("Invalid arguement.  Usage: trace <on | off>.");
+            	if(_Austin){
+            		_StdIn.putText("OH right in the family jewels! Use ON | OFF");
+            	}
+            	else{
+            		_StdIn.putText("Invalid arguement.  Usage: trace <on | off>.");
+            	}
         }        
     }
     else
@@ -437,7 +505,12 @@ function shellRot13(args)
     }
     else
     {
-        _StdIn.putText("Usage: rot13 <string>  Please supply a string.");
+    	if(_Austin){
+    		_StdIn.putText("Gah Blimey! Enter a string to rotate, groovy?");
+    	}
+    	else{
+    		_StdIn.putText("Usage: rot13 <string>  Please supply a string.");
+    }
     }
 }
 
@@ -476,16 +549,16 @@ function showError(error)
     switch(error.code) 
     {
     case error.PERMISSION_DENIED:
-      doc.innerHTML="Request for Geolocation denied by the user."
+      doc.innerHTML="Request for Geolocation denied by the user.";
       break;
     case error.POSITION_UNAVAILABLE:
-      doc.innerHTML="Unavailable location information."
+      doc.innerHTML="Unavailable location information.";
       break;
     case error.TIMEOUT:
-      doc.innerHTML="Location request timed out."
+      doc.innerHTML="Location request timed out.";
       break;
     case error.UNKNOWN_ERROR:
-      doc.innerHTML="UNKNOWN_ERROR."
+      doc.innerHTML="UNKNOWN_ERROR.";
       break;
     }   
 }

@@ -12,7 +12,7 @@
 // Global CONSTANTS
 //
 var APP_NAME = "Austinizer";  // An Austin Powers Themed Operating System
-var APP_VERSION = "0.01";   
+var APP_VERSION = "3.11";   
 
 var CPU_CLOCK_INTERVAL = 100;   // This is in ms, or milliseconds, so 1000 = 1 second.
 
@@ -61,6 +61,8 @@ var _OsShell = null;
 
 // At least this OS is not trying to kill you. (Yet.)
 var _SarcasticMode = false;
+//the os is groovy baby, yeah!
+var _Austin=false;
 
 // Global Device Driver Objects - page 12
 var krnKeyboardDriver = null;
