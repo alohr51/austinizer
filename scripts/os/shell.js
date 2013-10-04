@@ -127,15 +127,7 @@ function shellInit() {
     		var check = re.test(str);
     	}
     	if(check){
-    		var pid = getPid();
-    		//put program into ready queue with a pid
-    		readyQueue[pid] = new pcb();
-    		_currentPCB = readyQueue[pid];
-    		//store in main memory
-    		_memoryManagement.storeProgram(inputArray);
-    		_mainMem.display();
-    		_StdIn.putText("Program loaded with PID: "+pid);
-    		
+    		alert("User Input is All Good!");
     	}
     	else{
     		alert("Error: Check Hex input. Only Hex values are allowed.");
