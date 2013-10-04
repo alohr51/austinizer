@@ -1,13 +1,11 @@
-/* ------------
-mainMemory.js
------------- */
+//coreMemory.js
 
-function mainMemory() {
-    krnTrace("In Main Memory");
+function coreMemory() {
+    krnTrace("In Core Memory");
     // setup
     this.Memory = new Array();
     
-    // Main Memory Methods
+    // Core Memory Methods
     this.init = memoryInit;
     this.display = memoryDisplay;
     this.set = setMemory;

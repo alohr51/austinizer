@@ -42,7 +42,7 @@ var _Pid = 0;
 var readyQueue = new Array();
 // Default the OS trace to be on.
 var _Trace = true;
-var _mainMem = null;
+var _coreMem = null;
 var _currentPCB = null;
 var _memoryManagement = null;
 

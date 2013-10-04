@@ -26,8 +26,7 @@
    <script type="text/javascript" src="scripts/os/queue.js"></script>
    <script type="text/javascript" src="scripts/os/shell.js"></script>
    <script type="text/javascript" src="scripts/os/kernel.js"></script>
-   <script type="text/javascript" src="scripts/os/programLoad.js"></script>
-   <script type="text/javascript" src="scripts/os/mainMemory.js"></script>
+   <script type="text/javascript" src="scripts/os/coreMemory.js"></script>
    <script type="text/javascript" src="scripts/os/pcb.js"></script>
    <script type="text/javascript" src="scripts/os/memoryManagement.js"></script>
    
@@ -88,36 +87,29 @@
               tabindex="3">
       </canvas>
    </div>
-   <div id="divLog" style="margin-left:520px;">
-         <textarea name="taLog"
-                   id  ="taLog"
-                   rows="26"
-                   cols="48"
-         ></textarea>
+		<table>
+			<tbody>
+				<tr>
+					<td><textarea name="taLog" id="taLog" rows="15" cols="48"></textarea></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td><textarea name="taProgramInput" id="taProgramInput" rows="5"
+							cols="48"onfocus="this.value=''">Enter user Program</textarea></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>Memory<div id="MemoryDisplay" style="margin-left: 4px;width:400px;height:155px;"></div></td>
+					<td></td>
+				</tr>
+			</tbody>
+		</table>
+		<div id="divLog" style="margin-left:520px;">
+         
       
       <div id="location" style="float:right">Map</div>
    </div>
-   
-
-   <div id="divUserProgramInput" style="margin-left:520px;">
-      <label>
-         User Program Input
-         <br>
-         <textarea name="taProgramInput"
-                   id  ="taProgramInput"
-                   rows="8"
-                   cols="48"
-         ></textarea>
-      </label>
-      
    </div>
-
-</div>
-<div style="margin-left:4px;">Memory</div>
-<div id='MemoryDisplay' style="margin-left:4px;"></div>
-
-
-
 <p class="footerText" style="clear:both;">
    <br>
    Copyright &copy; 2008 - 2013 No Rights Reserved.

@@ -36,9 +36,9 @@ function hostInit()
 	 
 	//Setup Memory constants
 	_memoryManagement = new memoryManagement();
-	_mainMem = new mainMemory();
-	_mainMem.init();
-	_mainMem.display();
+	_coreMem = new coreMemory();
+	_coreMem.init();
+	_coreMem.display();
 	
 	// Clear the log text box.
 	document.getElementById("taLog").value="";

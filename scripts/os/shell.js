@@ -131,14 +131,32 @@ function shellInit() {
     		//put program into ready queue with a pid
     		readyQueue[pid] = new pcb();
     		_currentPCB = readyQueue[pid];
-    		//store in main memory
+    		//store in core memory
     		_memoryManagement.storeProgram(inputArray);
-    		_mainMem.display();
+    		_coreMem.display();
     		_StdIn.putText("Program loaded with PID: "+pid);
     		
     	}
     	else{
     		alert("Error: Check Hex input. Only Hex values are allowed.");
+    	}
+    };
+    this.commandList[this.commandList.length]=sc;
+    
+    //run
+    sc = new ShellCommand();
+    sc.command ="run";
+    sc.description = " <int>- Runs the program with a PID";
+    sc.func = function(args){
+    	if(args == ''){
+    		StdIn.putText("please enter a PID");
+    	}
+    	else{
+    		_currentPCB = readyQueue[args];
+    		_CPU.cycle();
+    		//add the process control block to the queue with
+    		//associated PID
+    		readyQueue[_PID] = _currentPCB;
     	}
     };
     this.commandList[this.commandList.length]=sc;

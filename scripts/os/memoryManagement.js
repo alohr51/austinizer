@@ -5,7 +5,7 @@
 function memoryManagement() {
 	krnTrace("Memory Management");
     this.storeProgram = StoreProgram;
-    this.getAddress = getMemoryAddress;
+    this.getMemoryAddress = getMemoryAddress;
     this.getPC = getPC;
 }
 
@@ -17,12 +17,12 @@ function getPid(){
 
 function getMemoryAddress(args) {
     var pc_index = args;
-    return (_mainMem.Memory[pc_index]);
+    return (_coreMem.Memory[pc_index]);
 }
 
 //Store a program at 0000
 function StoreProgram(args) {
-    _mainMem.set(args, "0000");
+    _coreMem.set(args, "0000");
 }
 
 

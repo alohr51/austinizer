@@ -20,6 +20,7 @@ function Cpu() {
     this.Yreg  = 0;     // Y register
     this.Zflag = 0;     // Z-ero flag (Think of it as "isZero".)
     this.isExecuting = false;
+    this.pcb;
     
     this.init = function() {
         this.PC    = 0;
@@ -32,6 +33,12 @@ function Cpu() {
     
     this.cycle = function() {
         krnTrace("CPU cycle");
+        this.pcb = new pcb();
+        var start = _memoryManagement.getPC();
+        var hexCode = _memoryManagement.getMemoryAddress(start);
+        if(hexCode=='a8'){
+        	alert("yay inside cycle");
+        }
         // TODO: Accumulate CPU usage and profiling statistics here.
         // Do the real work here. Be sure to set this.isExecuting appropriately.
     };
