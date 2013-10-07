@@ -29,15 +29,31 @@ function Cpu() {
         this.Yreg  = 0;
         this.Zflag = 0;      
         this.isExecuting = false;  
+        this.pcb = _currentPCB;
     };
     
     this.cycle = function() {
         krnTrace("CPU cycle");
         this.pcb = new pcb();
-        var start = _memoryManagement.getPC();
-        var hexCode = _memoryManagement.getMemoryAddress(start);
-        if(hexCode=='a8'){
-        	alert("yay inside cycle");
+        var pc = _memoryManager.getPC();
+        var hexCode = _memoryManager.getInstruction(pc).toUpperCase();
+        //load the accumulator
+        if(hexCode=='A9'){
+        	var userConstant = _memoryManager.getInstruction(pc+1);
+        	this.pcb.accum = parseInt(userConstant);
+        	_currentPCB = this.pcb;
+        	//need to step over the constant
+        	this.pcb.program_counter++;
+        	_currentPCB.pcbUpdateDisplay();
+        }
+        //Store accum in memory
+        if(hexCode = '8D'){
+        	//get the hex value of the memory location
+        	var memLocation = parseInt(_memoryManager.getInstruction(pc+1) + _memoryManager.getInstruction(pc+2),16);
+        	_coreMem.Memory[memLocation] = this.pcb.accum;
+        	//step over location
+        	this.pcb.program_counter+=2;
+        	_currentPCB.pcbUpdateDisplay();
         }
         // TODO: Accumulate CPU usage and profiling statistics here.
         // Do the real work here. Be sure to set this.isExecuting appropriately.
