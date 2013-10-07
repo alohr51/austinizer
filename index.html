@@ -27,9 +27,9 @@
    <script type="text/javascript" src="scripts/os/queue.js"></script>
    <script type="text/javascript" src="scripts/os/shell.js"></script>
    <script type="text/javascript" src="scripts/os/kernel.js"></script>
-   <script type="text/javascript" src="scripts/os/coreMemory.js"></script>
+   <script type="text/javascript" src="scripts/host/coreMemory.js"></script>
    <script type="text/javascript" src="scripts/os/pcb.js"></script>
-   <script type="text/javascript" src="scripts/os/memoryManagement.js"></script>
+   <script type="text/javascript" src="scripts/os/memoryManager.js"></script>
    
    <!-- Other Routines -->
    <script type="text/javascript" src="scripts/utils.js"></script>
@@ -91,16 +91,31 @@
 		<table>
 			<tbody>
 				<tr>
+					<td><table>
+							<tbody>
+								<tr>
+									<td>X Reg:<div id='xreg'></div></td>
+									<td>Y Reg:<div id='yreg'></div></td>
+									<td>Accum:<div id='accum'></div></td>
+									<td>PC:<div id='pc'></div></td>
+									<td>Z Flag:<div id='zflag'></div></td>
+								</tr>
+							</tbody>
+						</table></td>
+					<td></td>
+				</tr>
+				<tr>
 					<td><textarea name="taLog" id="taLog" rows="15" cols="48"></textarea></td>
 					<td></td>
 				</tr>
 				<tr>
 					<td><textarea name="taProgramInput" id="taProgramInput" rows="5"
-							cols="48"onfocus="this.value=''">Enter user Program</textarea></td>
+							cols="48" onfocus="this.value=''">Enter user Program</textarea></td>
 					<td></td>
 				</tr>
 				<tr>
-					<td>Memory<div id="MemoryDisplay" style="margin-left: 4px;width:400px;height:155px;"></div></td>
+					<td>Memory<div id="MemoryDisplay"
+							style="margin-left: 4px; width: 400px; height: 155px;"></div></td>
 					<td></td>
 				</tr>
 			</tbody>

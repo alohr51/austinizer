@@ -150,7 +150,7 @@ function shellInit() {
     		readyQueue[pid] = new pcb();
     		_currentPCB = readyQueue[pid];
     		//store in core memory
-    		_memoryManagement.storeProgram(inputArray);
+    		_memoryManager.storeProgram(inputArray);
     		_coreMem.display();
     		if(_Austin){
     			_StdIn.putText("Yeah baby yeah! Program locked and loaded with PID: "+pid);
@@ -188,7 +188,7 @@ function shellInit() {
     		_CPU.cycle();
     		//add the process control block to the queue with
     		//associated PID
-    		readyQueue[_PID] = _currentPCB;
+    		readyQueue[_Pid] = _currentPCB;
     	}
     };
     this.commandList[this.commandList.length]=sc;

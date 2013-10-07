@@ -44,7 +44,7 @@ var readyQueue = new Array();
 var _Trace = true;
 var _coreMem = null;
 var _currentPCB = null;
-var _memoryManagement = null;
+var _memoryManager = null;
 
 // OS queues
 var _KernelInterruptQueue = null;

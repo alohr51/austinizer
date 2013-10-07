@@ -35,7 +35,7 @@ function hostInit()
 	 _ContexBuffer = _CanvasBuffer.getContext('2d');
 	 
 	//Setup Memory constants
-	_memoryManagement = new memoryManagement();
+	_memoryManager = new memoryManager();
 	_coreMem = new coreMemory();
 	_coreMem.init();
 	_coreMem.display();

@@ -1,7 +1,4 @@
-/*
- * pcb.js
- * holds the information for each process.
- */
+//pcb.js
 
 function pcb() {
     // Properties
@@ -9,23 +6,33 @@ function pcb() {
     this.yreg = 0;
     this.program_counter = 0;
     this.accum = 0;
-    this.base_location = 0; //start of program.
-    this.end_location = 128; //end of program
-    this.schedule;
-    this.memoryManagement;
-    this.state;
-    this.IOinfo;
-    this.AccountingInfo;
+    this.zflag=0;
+    this.startLocation = 0; //start of program.
+    this.endLocation = 128; //end of program
+    this.memoryManager;
     this.display = pcbInfo;
+    this.pcbUpdateDisplay = pcbUpdate;
 }
 
 function pcbInfo() {
     krnTrace("Begin PCB Display.");
-    krnTrace("X register: " + this.xreg);
-    krnTrace("Y register: " + this.yreg);
-    krnTrace("Accumulator: " + this.accum);
+    krnTrace("X reg: " + this.xreg);
+    krnTrace("Y reg: " + this.yreg);
+    krnTrace("Accum: " + this.accum);
     krnTrace("PC: " + this.program_counter);
-    krnTrace("Start of program at: " + this.base_location);
-    krnTrace("End of program at: " + this.end_location);
     krnTrace("End PCB Display");
+}
+
+function pcbUpdate(){
+	var xreg = document.getElementById('xreg');
+	var yreg = document.getElementById('yreg');
+	var accum = document.getElementById('accum');
+	var pc = document.getElementById('pc');
+	var zflag = document.getElementById('zflag');
+
+	xreg.innerHTML = this.xreg;
+	yreg.innerHTML = this.yreg;
+	accum.innerHTML = this.accum;
+	pc.innerHTML = this.program_counter;
+	zflag.innerHTML = this.zflag;
 }
