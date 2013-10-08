@@ -1,4 +1,4 @@
-//Memory Management
+//Memory Manager
 
 function memoryManager() {
 	krnTrace("Memory Manager");
