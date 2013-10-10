@@ -11,7 +11,7 @@ function coreMemory() {
 }
 
 function memoryInit() {
-    //Initiliaze array with 0's
+    //Initialize array with 0's
     var i = 0;
     while (i <= 64) {
         this.Memory[i] = "00";

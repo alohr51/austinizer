@@ -9,30 +9,20 @@ function pcb() {
     this.zflag=0;
     this.startLocation = 0; //start of program.
     this.endLocation = 128; //end of program
-    this.memoryManager;
-    this.display = pcbInfo;
-    this.pcbUpdateDisplay = pcbUpdate;
+    this.update = pcbUpdate;
 }
 
-function pcbInfo() {
-    krnTrace("Begin PCB Display.");
-    krnTrace("X reg: " + this.xreg);
-    krnTrace("Y reg: " + this.yreg);
-    krnTrace("Accum: " + this.accum);
-    krnTrace("PC: " + this.program_counter);
-    krnTrace("End PCB Display");
-}
 
-function pcbUpdate(){
-	var xreg = document.getElementById('xreg');
-	var yreg = document.getElementById('yreg');
-	var accum = document.getElementById('accum');
-	var pc = document.getElementById('pc');
-	var zflag = document.getElementById('zflag');
+function pcbUpdate(xreg,yreg,accum,pc,zflag){
+	var xregTag = document.getElementById('xreg');
+	var yregTag = document.getElementById('yreg');
+	var accumTag = document.getElementById('accum');
+	var pcTag = document.getElementById('pc');
+	var zflagTag = document.getElementById('zflag');
 
-	xreg.innerHTML = this.xreg;
-	yreg.innerHTML = this.yreg;
-	accum.innerHTML = this.accum;
-	pc.innerHTML = this.program_counter;
-	zflag.innerHTML = this.zflag;
+	xregTag.innerHTML = xreg;
+	yregTag.innerHTML = yreg;
+	accumTag.innerHTML = accum;
+	pcTag.innerHTML = pc;
+	zflagTag.innerHTML = zflag;
 }
