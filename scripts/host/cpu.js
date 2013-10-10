@@ -38,12 +38,12 @@ function Cpu() {
     this.cycle = function() {
     	
     	//alert(_currentPCB.startLocation);
-        krnTrace("CPU cycle");
+        //krnTrace("CPU cycle");
         //this.pcb = _currentPCB;
         //var pc = _memoryManager.getPC();
         var hexCode = _memoryManager.getInstruction(_CPU.PC).toUpperCase();
-        setTimeout( execute(), 15000 );
-        function execute(){
+        //setTimeout( execute(), 15000 );
+       
         
         //var currPc = _memoryManager.getPC();
         // _currentPCB = this.pcb;
@@ -136,9 +136,9 @@ function Cpu() {
             	//get the value from Y reg
             	var yreg = parseInt(_CPU.Yreg).toString();
             	for(var i = 0; i < yreg.length;i++){
-            		_StdIn.putText(">");
             		_StdIn.putText( yreg.charAt(i));
             		_StdIn.advanceLine();
+            		_StdIn.putText(">");
             		
             	}
             }
@@ -174,6 +174,9 @@ function Cpu() {
         	_CurrentPCB.update(_CPU.Xreg, _CPU.Yreg, _CPU.Acc,_CPU.PC, _CPU.Zflag);
         	//stop execution at the end of program
         	_CPU.isExecuting = false;
+        	//_StdIn.putText(">");
+        	
+        	
         	
         }
         //Increment byte
@@ -203,9 +206,7 @@ function Cpu() {
         //real time updates
         _CurrentPCB.update(_CPU.Xreg, _CPU.Yreg, _CPU.Acc,_CPU.PC, _CPU.Zflag);
         krnTrace("Current PC: " + _CPU.PC + ", NextHex: "+ hexCode);
-        
-        
-    }
+    
 };
     };
 
