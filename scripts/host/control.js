@@ -39,6 +39,8 @@ function hostInit()
 	_coreMem = new coreMemory();
 	_coreMem.init();
 	_coreMem.display();
+	_CPU = new Cpu();
+	_CurrentPCB = new pcb();
 	
 	// Clear the log text box.
 	document.getElementById("taLog").value="";

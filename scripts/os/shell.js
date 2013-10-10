@@ -180,11 +180,14 @@ function shellInit() {
     			StdIn.putText("Ouch Kabibbles! Try entering a PID parameter!");
     		}
     		else{
-    			StdIn.putText("please enter a PID");
+    			StdIn.putText("please enter a PID ex. run 0");
     		}
     	}
     	else{
     		_currentPCB = readyQueue[args];
+    		_CPU.init();
+    		krnTrace("CPU initialized, starting program");
+    		_CPU.isExecuting = true;
     		_CPU.cycle();
     		//add the process control block to the queue with
     		//associated PID
@@ -540,7 +543,7 @@ function showPosition(position)
     var latlon=position.coords.latitude+","+position.coords.longitude;
 
     var img_url="http://maps.googleapis.com/maps/api/staticmap?center="
-    +latlon+"&zoom=14&size=400x412&sensor=false";
+    +latlon+"&zoom=14&size=250x250&sensor=false";
     document.getElementById("location").innerHTML="<img src='"+img_url+"'>";
 }
 

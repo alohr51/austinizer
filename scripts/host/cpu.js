@@ -21,6 +21,7 @@ function Cpu() {
     this.Zflag = 0;     // Zero flag (Think of it as "isZero".)
     this.isExecuting = false;
     this.pcb;
+    this.hexCode;
     
     this.init = function() {
         this.PC    = 0;
@@ -28,122 +29,183 @@ function Cpu() {
         this.Xreg  = 0;
         this.Yreg  = 0;
         this.Zflag = 0;      
-        this.isExecuting = false;  
-        this.pcb = _currentPCB;
+        this.isExecuting = false; 
+        this.pcb = new pcb();
+        this.hexCode = '00';
     };
     // TODO: Accumulate CPU usage and profiling statistics here.
     // Do the real work here. Be sure to set this.isExecuting appropriately.
     this.cycle = function() {
+    	
     	//alert(_currentPCB.startLocation);
         krnTrace("CPU cycle");
-        this.pcb = new pcb();
-        var pc = _memoryManager.getPC();
-        var hexCode = _memoryManager.getInstruction(pc).toUpperCase();
-        while (hexCode != "00")
-        {
-        var currPc = _memoryManager.getPC();
+        //this.pcb = _currentPCB;
+        //var pc = _memoryManager.getPC();
+        var hexCode = _memoryManager.getInstruction(_CPU.PC).toUpperCase();
+        setTimeout( execute(), 15000 );
+        function execute(){
+        
+        //var currPc = _memoryManager.getPC();
+        // _currentPCB = this.pcb;
+ 	
         //load the accumulator
         if(hexCode=='A9'){
-        	var userConstant = _memoryManager.getInstruction(currPc+1);
-        	this.pcb.accum = parseInt(userConstant);
-        	_currentPCB = this.pcb;
+        	var userConstant = _memoryManager.getInstruction(_CPU.PC+1);
+        	_CPU.Acc = parseInt(userConstant,16);
         	//need to step over the constant
-        	this.pcb.program_counter++;
-        	_currentPCB.pcbUpdateDisplay();
+        	_CPU.PC++;
+        	krnTrace("code A9 ran with: "+userConstant);
         }
         //Store accum in memory
-        if(hexCode = '8D'){
-        	//get the hex value of the memory location
-        	var memLocation = parseInt(_memoryManager.getInstruction(currPc+1) + _memoryManager.getInstruction(currPc+2),16);
-        	_coreMem.Memory[memLocation] = this.pcb.accum;
+        else if(hexCode == '8D'){
+        	//get the hex value of the memory location, order is important
+        	var memLocation = parseInt(_memoryManager.getInstruction(_CPU.PC+2) + _memoryManager.getInstruction(_CPU.PC+1),16);
+        	_coreMem.Memory[memLocation] = _CPU.Acc;
         	//step over location
-        	this.pcb.program_counter+=2;
-        	_currentPCB.pcbUpdateDisplay();
+        	_CPU.PC+=2;
+        	krnTrace("code 8D stored: "+_CPU.Acc+" in memory: "+ _coreMem.Memory[memLocation]);
         }
       //add with carry
-        if (hexCode == "6D") {
-            var memLocation = parseInt(_memoryManager.getInstruction(currPc + 1) + _memoryManager.getInstruction(currPc + 2),16);
-            this.pcb.accum = _coreMem.Memory[memLocation] + this.pcb.accum ;
+        else if (hexCode == "6D") {
+            var memLocation = parseInt(_memoryManager.getInstruction(_CPU.PC + 2) + _memoryManager.getInstruction(_CPU.PC + 1),16);
+            _CPU.Acc += parseInt(_coreMem.Memory[memLocation],16);
+            //krnTrace("6d cpuAcc:" + _CPU.Acc);
             //increment the pc past the instruction
-            this.pcb.program_counter += 2;
+            _CPU.PC+= 2;
+            krnTrace("code 6D add with carry: "+ _CPU.Acc);
         }
         //Load xReg with constant
-        if (hexCode == "A2") {
-            var userConstant = parseInt(_memoryManager.getInstruction(currPc + 1));
+        else if (hexCode == "A2") {
+            var userConstant = parseInt(_memoryManager.getInstruction(_CPU.PC + 1),16);
             //load x register
-            this.pcb.xreg = userConstant;
+            _CPU.Xreg = userConstant;
             //step over the constant
-            this.pcb.program_counter++;
+            _CPU.PC++;
+            krnTrace("code A2 loaded xreg with: "+userConstant);
+        }
+        //branch if z = 0
+        else if(hexCode =='D0'){
+        	if(_CPU.Zflag == 0 ){
+        		var bValue = parseInt(_memoryManager.getInstruction(_CPU.PC + 1),16);
+        		_CPU.PC+= bValue;
+        		//check bounds
+        		if(_CPU.PC > 255){
+        			_CPU.PC -= 256;
+        		}
+        		_CPU.PC++;
+        	}
+        	else{
+        		_CPU.PC+=2;
+        		}
+        	krnTrace("code D0 branch. zFlag: "+_CPU.Zflag);
         }
         //load y register with constant
-        if (hexCode == "A0") {
-            var userConstant = parseInt(_memoryManager.getInstruction(currPc + 1));
+        else if (hexCode == "A0") {
+            var userConstant = memoryManager.getInstruction(_CPU.PC + 1);
             //load y register
-            this.pcb.yreg = userConstant;
+            _CPU.Yreg = userConstant;
             //step over the constant
-            this.pcb.program_counter++;
+            _CPU.PC++;
+            krnTrace("code A0 loaded yreg with: "+userConstant);
         }
         //Load yReg from memory
-        if (hexCode == "AC") {
-            var memLocation = parseInt(_memoryManager.getInstruction(currPc) + _memoryManager.getInstruction(currPc + 2),16);
-            this.pcb.yreg = _coreMem.Memory[memLocation];
+        else if (hexCode == "AC") {
+            var memLocation = parseInt(_memoryManager.getInstruction(_CPU.PC+2) + _memoryManager.getInstruction(_CPU.PC + 1),16);
+            _CPU.Yreg = _coreMem.Memory[memLocation];
             //move over instruction
-            this.pcb.program_counter += 2;
+            _CPU.PC += 2;
+            krnTrace("code AC loaded yreg from memory: "+this.pcb.yreg);
         }
         //compare byte to x reg in memory to set z flag
-        if (hexCode == "EC") {
-        	var memLocation = parseInt(_memoryManager.getInstruction(currPc + 1) + _memoryManager.getInstruction(currPc + 2),16);
-            //check with x reg
-            if(memLocation - this.pcb.xreg == 0){
-            	this.Zflag = 1;
+        else if (hexCode == "EC") {
+        	var memAddress = parseInt(_memoryManager.getInstruction(_CPU.PC + 2) + _memoryManager.getInstruction(_CPU.PC + 1),16);
+        	//check with x reg 
+            if(_coreMem.Memory[memAddress] - _CPU.Xreg == 0){
+            	_CPU.Zflag = 1;
             }
             else{
-            	this.Zflag = 0;
+            	_CPU.Zflag = 0;
             }
-            this.pcb.program_counter+=2;
+            
+            _CPU.PC+=2;
+            krnTrace("code EC checked zFlag: "+_CPU.Zflag);
         }
         //System Call
-        if (hexCode == "FF") {
-            //Interrupt stuff?
+        else if (hexCode == "FF") {
+            if(_CPU.Xreg === 1){
+            	//get the value from Y reg
+            	var yreg = parseInt(_CPU.Yreg).toString();
+            	for(var i = 0; i < yreg.length;i++){
+            		_StdIn.putText(">");
+            		_StdIn.putText( yreg.charAt(i));
+            		_StdIn.advanceLine();
+            		
+            	}
+            }
+            //Print string stored at address in Y reg
+            else if(_CPU.Xreg ===2){
+            	var yregAddress = parseInt(_CPU.Yreg,16);
+            	var currentdec = _coreMem.Memory[yregAddress];
+            	while(currentdec != '00'){
+            		//var decInt = parseInt(currentHex,16);
+            		var chr = String.fromCharCode(currentdec);
+            		//format output with prompt and advance line
+            		_StdIn.putText(">");
+            		_StdIn.putText(chr);
+            		_StdIn.advanceLine();
+            		//move address up one then get next address from core mem
+            		currentdec++;
+            		currentdec = _coreMem.Memory[yregAddress];
+            	}
+
+            }
+        	krnTrace("code FF ran with system call: ");
         }
         //no op just increment pc
-        if(hexCode =="EA"){
-        	this.pcb.program_counter++;
+        else if(hexCode =="EA"){
+        	_CPU.PC++;
+        	krnTrace("code EA no op increment pc to: "+_CPU.PC);
+        }
+        
+        //system break
+        else if (hexCode =='00'){
+        	krnTrace("system break...");
+        	//send an update to the pcb display
+        	_CurrentPCB.update(_CPU.Xreg, _CPU.Yreg, _CPU.Acc,_CPU.PC, _CPU.Zflag);
+        	//stop execution at the end of program
+        	_CPU.isExecuting = false;
+        	
         }
         //Increment byte
-        if(hexCode =="EE"){
-        	var byteToInc= _memoryManager.getInstruction(currPc+2);
-        	var memLocation = parseInt(_memoryManager.getInstruction(currPc+1) + byteToInc,16);
+        else if(hexCode =="EE"){
+        	var memLocation = parseInt(_memoryManager.getInstruction(_CPU.PC+2) + _memoryManager.getInstruction(_CPU.PC + 1),16);
         	//increment the byte
-        	byteToInc++;
-        	_coreMem.Memory[memLocation]=byteToInc;
-        	this.pcb.program_counter+=2;
+        	//byteToInc++;
+        	var byte = _coreMem.Memory[memLocation];
+        	//increment byte
+        	byte++;
+        	//put byte back into memory
+        	_coreMem.Memory[memLocation] = byte;
+        	_CPU.PC+=2;
+        	krnTrace("code EE incremented byte");
+        }
+        else{
+        	krnTrace("code not recognized:" + hexCode);
         }
         
-        //bottom of while loop get next instruction
-        this.pcb.program_counter++;
-        var current = _memoryManager.getPC();
-        hexCode = _memoryManager.getInstruction(current);
-        _current_pcb = this.pcb;
+       //bottom of while loop get next instruction
+        _CPU.PC++;
+        //var current = _memoryManager.getPC();
+        hexCode = _memoryManager.getInstruction(_CPU.PC);
+        
+        //_currentPCB = this.pcb;
         _coreMem.display();
+        //real time updates
+        _CurrentPCB.update(_CPU.Xreg, _CPU.Yreg, _CPU.Acc,_CPU.PC, _CPU.Zflag);
+        krnTrace("Current PC: " + _CPU.PC + ", NextHex: "+ hexCode);
+        
         
     }
-    //need to restore the info in the array of pid/current pid
-    _current_pcb = this.pcb;
-    _current_pcb.display();
-    _current_pcb.pcbUpdateDisplay();
-    _StdIn.putText(memory());
 };
-
     };
-    
-    function memory() {
-        var output = "";
-        for (x in this.memory) {
-            if (!this.memory[x] == "") {
-                output = output + this.memory[x] + " ";
-            }
-        }
-        return (output);
-    }
 

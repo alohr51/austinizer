@@ -37,7 +37,6 @@ var _DefaultFontSize = 13;
 var _FontHeightMargin = 4;        // Additional space added to font size when advancing a line.
 var _CanvasBuffer = null;
 var _ContexBuffer = null;
-
 var _Pid = 0;
 var readyQueue = new Array();
 // Default the OS trace to be on.
@@ -45,6 +44,7 @@ var _Trace = true;
 var _coreMem = null;
 var _currentPCB = null;
 var _memoryManager = null;
+var _CPU = null;
 
 // OS queues
 var _KernelInterruptQueue = null;

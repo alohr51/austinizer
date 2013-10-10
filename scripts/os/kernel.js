@@ -172,12 +172,13 @@ function krnTrace(msg)
          // We can't log every idle clock pulse because it would lag the browser very quickly.
          if (_OSclock % 75 == 0)  // Check the CPU_CLOCK_INTERVAL in globals.js for an 
          {                        // idea of the tick rate and adjust this line accordingly.
-            hostLog(msg, "OS");
+            hostLog(msg+"\n", "OS");
+            
          }         
       }
       else
       {
-       hostLog(msg, "OS");
+       hostLog(msg+"\n", "OS");
       }
    }
 }
