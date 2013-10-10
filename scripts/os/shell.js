@@ -188,10 +188,10 @@ function shellInit() {
     		_CPU.init();
     		krnTrace("CPU initialized, starting program");
     		_CPU.isExecuting = true;
-    		_CPU.cycle();
+    		//_CPU.cycle();
     		//add the process control block to the queue with
     		//associated PID
-    		readyQueue[_Pid] = _currentPCB;
+    		//readyQueue[_Pid] = _currentPCB;
     	}
     };
     this.commandList[this.commandList.length]=sc;
