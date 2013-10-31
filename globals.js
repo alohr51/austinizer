@@ -45,16 +45,19 @@ var _coreMem = null;
 var _currentPCB = null;
 var _memoryManager = null;
 var _CPU = null;
-
+var _MemoryStart = "0000";
+var _2ndMemoryStart = "0040";
+var _3rdMemoryStart = "0080";
 // OS queues
 var _KernelInterruptQueue = null;
 var _KernelBuffers = null;
 var _KernelInputQueue = null;
-
+var _Quantum = 1;
+var ActivePids = new Array();
 // Standard input and output
 var _StdIn  = null;
 var _StdOut = null;
-
+var _ProgramsStored = 0;
 // UI
 var _Console = null;
 var _OsShell = null;

@@ -175,18 +175,23 @@ function shellInit() {
     sc.command ="run";
     sc.description = " <int>- Runs the program with a PID";
     sc.func = function(args){
-    	if(args == ''){
+    	if(args[0] == ''){
     		if(_Austin){
-    			StdIn.putText("Ouch Kabibbles! Try entering a PID parameter!");
+    			_StdIn.putText("Ouch Kabibbles! Try entering a PID parameter!");
     		}
     		else{
-    			StdIn.putText("please enter a PID ex. run 0");
+    			_StdIn.putText("please enter a PID ex. run 0");
     		}
     	}
+    	else if(!readyQueue[args[0]]){
+    		_StdIn.putText("No program with supplied PID");
+    	}
     	else{
-    		_currentPCB = readyQueue[args];
+    		_currentPCB = readyQueue[args[0]];
+    		//add to list so we know it is running
+    		ActivePids.push(args[0]);
     		_CPU.init();
-    		krnTrace("CPU initialized, starting program");
+    		krnTrace("CPU initialized, starting program: " + args[0]);
     		_CPU.isExecuting = true;
     		//_CPU.cycle();
     		//add the process control block to the queue with
@@ -195,6 +200,66 @@ function shellInit() {
     	}
     };
     this.commandList[this.commandList.length]=sc;
+    
+    //runAll
+    sc = new ShellCommand();
+    sc.command ="runall";
+    sc.description = "- Runs all programs in memory";
+    sc.func = function(){
+    	if(readyQueue.length===0){
+    		if(_Austin){
+    			_StdIn.putText("Blimey! There are no programs in memory mate!");
+    		}
+    		else{
+    			_StdIn.putText("Please load at least 1 program into memory");
+    		}
+    	}
+    	else{
+    		_CPU.init();
+    		for(var i=0; i<readyQueue.length;i++){
+    		_currentPCB = readyQueue[i];
+    		krnTrace("CPU initialized, starting program: "+i);
+    		_CPU.isExecuting = true;
+    		}
+    	}
+
+    };
+ this.commandList[this.commandList.length]=sc;
+ 
+ //displaypid
+ sc = new ShellCommand();
+ sc.command ="displaypid";
+ sc.description = "- displays all current pids";
+ sc.func = function(){
+	 if(!_CPU.isExecuting){
+		 ActivePids = [];
+		 _StdIn.putText("There are no current processes running");
+	 }
+ 	_StdIn.putText(ActivePids.toString());
+ };
+this.commandList[this.commandList.length]=sc;
+ 
+//kill<pid>
+sc = new ShellCommand();
+sc.command ="kill";
+sc.description = "-<int> kills a process with given pid";
+sc.func = function(args){
+	_currentPCB = readyQueue[args[0]];
+	alert(_currentPCB);
+
+	
+};
+this.commandList[this.commandList.length]=sc;
+ 
+
+//quantum
+ sc = new ShellCommand(args);
+ sc.command ="quantum";
+ sc.description = "- set the quantum for RR schd";
+ sc.func = function(){
+	 _Quantum = args[0];
+ };
+ this.commandList[this.commandList.length]=sc;
     
     //date
     sc = new ShellCommand();
@@ -927,7 +992,7 @@ function stateList(args){
     if (args.length > 0)
     {
     	for(var i = 0;i<initial.length;i++){
-    		if(args == initial[i]){
+    		if(args === initial[i]){
     			found = true;
     			_StdIn.putText("State: " + state[i]);
     			_StdIn.advanceLine();

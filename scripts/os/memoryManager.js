@@ -18,9 +18,18 @@ function getInstruction(args) {
     return (_coreMem.Memory[pc_index]);
 }
 
-//Store a program at 0000
+//Store a program at desired memory block
 function StoreProgram(args) {
-    _coreMem.set(args, "0000");
+	if(_ProgramsStored===0){
+		_coreMem.set(args, _MemoryStart);
+	}
+	else if(_ProgramsStored===1){
+		_coreMem.set(args, _2ndMemoryStart);
+	}
+	else if(_ProgramsStored===2){
+		_coreMem.set(args, _3rdMemoryStart);
+	}
+	_ProgramsStored++;
 }
 
 
