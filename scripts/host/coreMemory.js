@@ -13,12 +13,12 @@ function coreMemory() {
 function memoryInit() {
     //Initialize array with 0's
     var i = 0;
-    while (i <= 192) {
+    while (i <= 782) {
         this.Memory[i] = "00";
         i++;
     }
     i = 0;
-    while (i <= 192) {
+    while (i <= 782) {
         i++;
     }
     this.display();
@@ -33,7 +33,7 @@ function setMemory(args, base) {
         this.Memory[newBase] = program[x];
        
     }
-    _currentPCB.startLocation = base;
+    //_currentPCB.startLocation = base;
 }
 
 function memoryDisplay() {
@@ -42,7 +42,7 @@ function memoryDisplay() {
     var i = 0;
     var row = "0000: ";
     var rowEnds = 0;
-    while (i <= 192) {
+    while (i <= 782) {
         //checks if at end of line
         if (rowEnds == 8) {
         	display.innerHTML = display.innerHTML + "<div>" + row + "</div>";
