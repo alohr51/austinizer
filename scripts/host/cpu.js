@@ -20,26 +20,28 @@ function Cpu() {
     this.pcb = new pcb();
     
     this.init = function() {
-        this.isExecuting = false; 
+        this.isExecuting = false;
+		
     };
     // TODO: Accumulate CPU usage and profiling statistics here.
     // Do the real work here. Be sure to set this.isExecuting appropriately.
     this.cycle = function() {
-    	
     	//alert(_currentPCB.startLocation);
         //krnTrace("CPU cycle");
         this.pcb = _currentPCB;
         var currPC = _memoryManager.getPC();
         //var pc = _memoryManager.getPC();
-        var hexCode = _memoryManager.getInstruction(_currentPCB.startLocation + currPC).toUpperCase();
+        var hexCode = _memoryManager.getInstruction(currPC).toUpperCase();
+        //alert("location" + currPC);
         //alert(hexCode);
        
         
         //var currPc = _memoryManager.getPC();
         // _currentPCB = this.pcb;
-        if(_currentPCB.kill){
-        	hexCode ='00';
-        }
+        //if(this.pcb.kill){
+        //	hexCode ='00';
+        //}
+        
         //load the accumulator
         if(hexCode==='A9'){
         	var userConstant = _memoryManager.getInstruction(currPC+1);
@@ -138,6 +140,7 @@ function Cpu() {
         }
         //System Call
         else if (hexCode === "FF") {
+        	alert("FF");
             if(this.pcb.xreg === 1){
             	//get the value from Y reg
             	var yreg = parseInt(this.pcb.yreg).toString();
@@ -152,6 +155,7 @@ function Cpu() {
             else if(this.pcb.xreg ===2){
             	var yregAddress = parseInt(this.pcb.yreg);
             	var currentdec = _coreMem.Memory[yregAddress];
+            	
             	while(currentdec != '00'){
             		var key = parseInt(currentdec,16);
             		var chr = String.fromCharCode(key);
@@ -206,13 +210,13 @@ function Cpu() {
        //bottom of while loop get next instruction
         this.pcb.program_counter++;
         //var current = _memoryManager.getPC();
-        hexCode = _memoryManager.getInstruction(_currentPCB.startLocation + currPC);
+        var nextHexCode = _memoryManager.getInstruction(this.pcb.program_counter);
         
         //_currentPCB = this.pcb;
         _coreMem.display();
         //real time updates
         _CurrentPCB.update(this.pcb.xreg, this.pcb.yreg, this.pcb.accum,this.pcb.program_counter, this.pcb.zflag);
-        krnTrace("Current PC: " + currPC + ", NextHex: "+ hexCode);
+        krnTrace("Current PC: " + currPC + ", NextHex: "+ nextHexCode);
     
 };
     };

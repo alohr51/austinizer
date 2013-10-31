@@ -46,8 +46,9 @@ var _currentPCB = null;
 var _memoryManager = null;
 var _CPU = null;
 var _MemoryStart = "0000";
-var _2ndMemoryStart = "0040";
-var _3rdMemoryStart = "0080";
+var _2ndMemoryStart = "0257";
+var _3rdMemoryStart = "0514";
+var _PartitionSize = 256;
 // OS queues
 var _KernelInterruptQueue = null;
 var _KernelBuffers = null;

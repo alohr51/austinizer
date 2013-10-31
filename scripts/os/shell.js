@@ -147,8 +147,9 @@ function shellInit() {
     	if(check){
     		var pid = getPid();
     		//put program into ready queue with a pid
-    		readyQueue[pid] = new pcb();
-    		_currentPCB = readyQueue[pid];
+    		var loadPCB = new pcb();
+    		//loadPCB.startLocation = _memoryManager.findStart();
+    		readyQueue[pid]= loadPCB;
     		//store in core memory
     		_memoryManager.storeProgram(inputArray);
     		_coreMem.display();
@@ -188,6 +189,7 @@ function shellInit() {
     	}
     	else{
     		_currentPCB = readyQueue[args[0]];
+    		//_currentPCB.program_counter = 0;
     		//add to list so we know it is running
     		ActivePids.push(args[0]);
     		_CPU.init();
@@ -198,6 +200,7 @@ function shellInit() {
     		//associated PID
     		//readyQueue[_Pid] = _currentPCB;
     	}
+    	
     };
     this.commandList[this.commandList.length]=sc;
     
@@ -206,6 +209,7 @@ function shellInit() {
     sc.command ="runall";
     sc.description = "- Runs all programs in memory";
     sc.func = function(){
+    	
     	if(readyQueue.length===0){
     		if(_Austin){
     			_StdIn.putText("Blimey! There are no programs in memory mate!");
@@ -215,12 +219,12 @@ function shellInit() {
     		}
     	}
     	else{
-    		_CPU.init();
-    		for(var i=0; i<readyQueue.length;i++){
-    		_currentPCB = readyQueue[i];
-    		krnTrace("CPU initialized, starting program: "+i);
-    		_CPU.isExecuting = true;
+    		for(var i = 0; i < readyQueue.length;i++){
+    			_CPU.init();
+    			_currentPCB = readyQueue[i];
+    			_CPU.isExecuting = true;
     		}
+
     	}
 
     };
@@ -253,11 +257,12 @@ this.commandList[this.commandList.length]=sc;
  
 
 //quantum
- sc = new ShellCommand(args);
+ sc = new ShellCommand();
  sc.command ="quantum";
  sc.description = "- set the quantum for RR schd";
- sc.func = function(){
+ sc.func = function(args){
 	 _Quantum = args[0];
+	 alert(_CPU.isExecuting);
  };
  this.commandList[this.commandList.length]=sc;
     
