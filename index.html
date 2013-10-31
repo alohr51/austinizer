@@ -111,7 +111,8 @@
 				<tr>
 					<td><textarea name="taProgramInput" id="taProgramInput" rows="5"
 							cols="48">Enter user Program</textarea></td>
-					<td><button name='prog1' id='prog1' onclick='addText()'type="button">Program 1</button></td>
+					<td><button name='prog1' id='prog1' onclick='addPrg1()'type="button">Program 1</button></td>
+					<td><button name='prog2' id='prog2' onclick='addPrg2()'type="button">Program 2</button></td>
 				</tr>
 				<tr>
 					<td>Memory<div id="MemoryDisplay"
@@ -138,8 +139,11 @@ setInterval(function(){
 	    document.getElementById("status").innerHTML = (new Date()).toLocaleString();
 	    	}, 1000);
 	    	
-function addText(){
-document.getElementById('taProgramInput').value="A9 03 8D 41 00 A9 01 8D 40 00 AC 40 00 A2 01 EA EE 40 00 AE 40 00 EC 41 00 D0 EF A9 44 8D 42 00 A9 4F 8D 43 00 A9 4E 8D 44 00 A9 45 8D 45 00 A9 00 8D 46 00 A2 02 A0 42 EA 00";
+function addPrg1(){
+document.getElementById('taProgramInput').value="A9 03 8D 00 00 A9 04 6D 00 00 8D 01 00 A2 01 AC 01 00 FF";
+}
+function addPrg2(){
+document.getElementById('taProgramInput').value="A9 03 8D 41 00 A9 01 8D 40 00 AC 40 00 A2 01 FF EE 40 00 AE 40 00 EC 41 00 D0 EF A9 44 8D 42 00 A9 4F 8D 43 00 A9 4E 8D 44 00 A9 45 8D 45 00 A9 00 8D 46 00 A2 02 A0 42 FF 00";
 }
 
 </script>

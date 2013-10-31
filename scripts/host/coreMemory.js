@@ -13,12 +13,12 @@ function coreMemory() {
 function memoryInit() {
     //Initialize array with 0's
     var i = 0;
-    while (i <= 64) {
+    while (i <= 192) {
         this.Memory[i] = "00";
         i++;
     }
     i = 0;
-    while (i <= 64) {
+    while (i <= 192) {
         i++;
     }
     this.display();
@@ -42,7 +42,7 @@ function memoryDisplay() {
     var i = 0;
     var row = "0000: ";
     var rowEnds = 0;
-    while (i <= 64) {
+    while (i <= 192) {
         //checks if at end of line
         if (rowEnds == 8) {
         	display.innerHTML = display.innerHTML + "<div>" + row + "</div>";
