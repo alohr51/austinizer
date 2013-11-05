@@ -51,3 +51,7 @@ function displayfiller(oldStr, zeroForm) {
     }
     return newStr;
 }
+
+function peek(array) {
+    if (array.length>0) return array[array.length-1];
+ }

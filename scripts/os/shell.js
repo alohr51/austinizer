@@ -145,10 +145,12 @@ function shellInit() {
     		var check = re.test(str);
     	}
     	if(check){
-    		var pid = getPid();
-    		//put program into ready queue with a pid
     		var loadPCB = new pcb();
-    		//loadPCB.startLocation = _memoryManager.findStart();
+    		var pid = getPid();
+    		var start = _memoryManager.findStart();
+    		//put program into ready queue with a pid and start location
+    		loadPCB.startLocation = start;
+    		loadPCB.pid = pid;
     		readyQueue[pid]= loadPCB;
     		//store in core memory
     		_memoryManager.storeProgram(inputArray);
@@ -218,13 +220,11 @@ function shellInit() {
     			_StdIn.putText("Please load at least 1 program into memory");
     		}
     	}
-    	else{
-    		for(var i = 0; i < readyQueue.length;i++){
-    			_CPU.init();
-    			_currentPCB = readyQueue[i];
-    			_CPU.isExecuting = true;
-    		}
-
+    	else{   		
+    		_CPU.init();
+    		runAllMode = true;
+    		_currentPCB = readyQueue[0];
+    		_CPU.isExecuting = true;
     	}
 
     };
@@ -248,10 +248,13 @@ sc = new ShellCommand();
 sc.command ="kill";
 sc.description = "-<int> kills a process with given pid";
 sc.func = function(args){
-	_currentPCB = readyQueue[args[0]];
-	alert(_currentPCB);
-
-	
+	if(args[0]===''||args[0]===undefined){
+		_StdIn.putText("please enter a pid to kill");
+	}
+	else{
+	_currentPCB = readyQueue[args];
+	_currentPCB.kill = true;
+	}
 };
 this.commandList[this.commandList.length]=sc;
  

@@ -5,6 +5,7 @@ function memoryManager() {
     this.storeProgram = StoreProgram;
     this.getInstruction = getInstruction;
     this.getPC = getPC;
+    this.findStart = findStart;
 }
 
 //keep track of PID for programs
@@ -30,6 +31,18 @@ function StoreProgram(args) {
 		_coreMem.set(args, _3rdMemoryStart);
 	}
 	_ProgramsStored++;
+}
+
+function findStart() {
+	if(_ProgramsStored===0){
+		return _MemoryStart;
+	}
+	else if(_ProgramsStored===1){
+		return _2ndMemoryStart;
+	}
+	else if(_ProgramsStored===2){
+		return _3rdMemoryStart;
+	}
 }
 
 

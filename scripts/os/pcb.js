@@ -8,6 +8,7 @@ function pcb() {
     this.accum = 0;
     this.zflag=0;
     this.pid = 0;
+    this.kill = false;
     this.startLocation = 0; //start of program.
     this.endLocation = 128; //end of program
     this.update = pcbUpdate;

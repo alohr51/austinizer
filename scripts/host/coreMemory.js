@@ -25,7 +25,7 @@ function memoryInit() {
 }
 
 function setMemory(args, base) {
-    base = parseInt(base, 16);
+    base = parseInt(base);
     var program = args;
     //for each opcode add them to the correct position
     for (x in program) {
