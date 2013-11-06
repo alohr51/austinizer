@@ -145,12 +145,12 @@ function shellInit() {
     		var check = re.test(str);
     	}
     	if(check){
-    		var loadPCB = new pcb();
     		var pid = getPid();
+    		//put program into ready queue with a pid
+    		var loadPCB = new pcb();
     		var start = _memoryManager.findStart();
-    		//put program into ready queue with a pid and start location
-    		loadPCB.startLocation = start;
     		loadPCB.pid = pid;
+    		loadPCB.startLocation = parseInt(_memoryManager.findStart());
     		readyQueue[pid]= loadPCB;
     		//store in core memory
     		_memoryManager.storeProgram(inputArray);

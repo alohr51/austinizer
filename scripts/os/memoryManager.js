@@ -49,6 +49,6 @@ function findStart() {
 
 
 function getPC() {
-    var pc = _currentPCB.startLocation + _currentPCB.program_counter;
+    var pc = parseInt(_currentPCB.startLocation) + parseInt(_currentPCB.program_counter);
     return pc;
 }
