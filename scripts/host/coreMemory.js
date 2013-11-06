@@ -28,10 +28,17 @@ function setMemory(args, base) {
     base = parseInt(base);
     var program = args;
     //for each opcode add them to the correct position
-    for (x in program) {
-        var newBase = parseInt(x) + base; 
-        this.Memory[newBase] = program[x];
+    if(program.length < _PartitionSize){
+    	_MemGood = true;
+    	for (x in program) {
+    		var newBase = parseInt(x) + base; 
+    		this.Memory[newBase] = program[x];
        
+    	}
+    	}
+    else{
+    	krnTrace("ERROR: Current program is too large. You only have: "+ _PartitionSize+" bytes of memory to use." +
+    			"The program you are trying to load is: "+ program.length+ " bytes");
     }
     //_currentPCB.startLocation = base;
 }
