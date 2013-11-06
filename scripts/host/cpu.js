@@ -31,6 +31,7 @@ function Cpu() {
         var currPC = _memoryManager.getPC();
         var processKill = false;
         //var pc = _memoryManager.getPC();
+        
         var hexCode = _memoryManager.getInstruction(currPC).toUpperCase();
         //alert("location" + currPC);
         //alert(hexCode);
@@ -54,18 +55,20 @@ function Cpu() {
         else if(hexCode === '8D'){
         	//get the hex value of the memory location, order is important
         	var memLocation = parseInt(_memoryManager.getInstruction(currPC+2) + _memoryManager.getInstruction(currPC+1),16);
+        	var memAddress = memLocation + _currentPCB.startLocation;
         	var hex = this.pcb.accum.toString(16).toUpperCase();
         	if(hex.length===1)hex = "0"+hex;
-        	_coreMem.Memory[memLocation] = hex;
+        	_coreMem.Memory[memAddress] = hex;
         	//step over location
         	//_CPU.PC+=2;
         	this.pcb.program_counter+=2;
-        	krnTrace("code 8D stored: "+this.pcb.accum+" in memory location: "+ _coreMem.Memory[memLocation]);
+        	krnTrace("code 8D stored: "+this.pcb.accum+" in memory location: "+ _coreMem.Memory[memAddress]);
         }
       //add with carry
         else if (hexCode === "6D") {
             var memLocation = parseInt(_memoryManager.getInstruction(currPC+ 2) + _memoryManager.getInstruction(currPC + 1),16);
-            this.pcb.accum += parseInt(_coreMem.Memory[memLocation],16);
+            var memAddress = memLocation + _currentPCB.startLocation;
+            this.pcb.accum += parseInt(_coreMem.Memory[memAddress],16);
             //krnTrace("6d cpuAcc:" + _CPU.Acc);
             //increment the pc past the instruction
             this.pcb.program_counter+= 2;
@@ -84,8 +87,9 @@ function Cpu() {
         //Load xReg from memory
         else if (hexCode === "AE") {
         	var memLocation = parseInt(_memoryManager.getInstruction(currPC + 2) + _memoryManager.getInstruction(currPC + 1),16);
-            //load x register
-        	this.pcb.xreg = parseInt(_coreMem.Memory[memLocation],16);
+            var memAddress = memLocation + _currentPCB.startLocation;
+        	//load x register
+        	this.pcb.xreg = parseInt(_coreMem.Memory[memAddress],16);
             //step over the constant
         	this.pcb.program_counter+=2;
             krnTrace("code AE loaded xreg from mem: "+memLocation);
@@ -120,7 +124,7 @@ function Cpu() {
         //Load yReg from memory
         else if (hexCode === "AC") {
             var memLocation = parseInt(_memoryManager.getInstruction(currPC+2) + _memoryManager.getInstruction(currPC + 1),16);
-            var decAddress = memLocation + _currentPCB.startLocation;
+            var decAddress = memLocation + parseInt(_currentPCB.startLocation);
             this.pcb.yreg =_coreMem.Memory[decAddress];
             //move over instruction
             this.pcb.program_counter += 2;
@@ -128,7 +132,8 @@ function Cpu() {
         }
         //compare byte to x reg in memory to set z flag
         else if (hexCode === "EC") {
-        	var memAddress = parseInt(_memoryManager.getInstruction(currPC + 2) + _memoryManager.getInstruction(currPC + 1),16);
+        	var memLocation = parseInt(_memoryManager.getInstruction(currPC + 2) + _memoryManager.getInstruction(currPC + 1),16);
+        	var memAddress = memLocation + _currentPCB.startLocation;
         	//check with x reg 
             if(parseInt(_coreMem.Memory[memAddress]) - this.pcb.xreg === 0){
             	this.pcb.zflag = 1;
@@ -210,8 +215,8 @@ function Cpu() {
         else if(hexCode ==="EE"){
         	var memLocation = parseInt(_memoryManager.getInstruction(currPC+2) + _memoryManager.getInstruction(currPC + 1),16);
         	//increment the byte
-        	//byteToInc++;
-        	var byte = parseInt(_coreMem.Memory[memLocation],16);
+        	var memAddress = memLocation + _currentPCB.startLocation;
+        	var byte = parseInt(_coreMem.Memory[memAddress],16);
         	//increment byte
         	byte++;
         	var hex = byte.toString(16).toUpperCase();
@@ -219,7 +224,7 @@ function Cpu() {
                 hex = "0" + hex;
             }
         	//put byte back into memory
-        	_coreMem.Memory[memLocation] = hex;
+        	_coreMem.Memory[memAddress] = hex;
         	this.pcb.program_counter+=2;
         	krnTrace("code EE incremented byte, now: " +hex);
         }
