@@ -39,7 +39,7 @@ var _CanvasBuffer = null;
 var _ContexBuffer = null;
 var _Pid = 0;
 var readyQueue = new Array();
-var runAllMode = false;
+var _RunAllMode = false;
 // Default the OS trace to be on.
 var _Trace = true;
 var _coreMem = null;
@@ -50,6 +50,7 @@ var _MemoryStart = "0000";
 var _2ndMemoryStart = "0264";
 var _3rdMemoryStart = "0520";
 var _PartitionSize = 256;
+var _MemGood = false;
 // OS queues
 var _KernelInterruptQueue = null;
 var _KernelBuffers = null;

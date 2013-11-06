@@ -155,11 +155,18 @@ function shellInit() {
     		//store in core memory
     		_memoryManager.storeProgram(inputArray);
     		_coreMem.display();
-    		if(_Austin){
-    			_StdIn.putText("Yeah baby yeah! Program locked and loaded with PID: "+pid);
+    		//check to see if the memory allowed to add the program. 
+    		//an example of it not allowing it to load would be due to size constraints
+    		if(_MemGood){
+	    		if(_Austin){
+	    			_StdIn.putText("Yeah baby yeah! Program locked and loaded with PID: "+pid);
+	    		}
+	    		else{
+	    			_StdIn.putText("Program loaded with PID: "+pid);
+	    		}
     		}
     		else{
-    			_StdIn.putText("Program loaded with PID: "+pid);
+    			_StdIn.putText("Error in loading Program. Check Log for details.");
     		}
     	}
     	else{
@@ -191,6 +198,10 @@ function shellInit() {
     	}
     	else{
     		_currentPCB = readyQueue[args[0]];
+    		//remove the process from the readyqueue
+    		readyQueue.splice(args[0], 1);
+    		//maybe say slot(args[0] now open?????) sounds like a good idea.
+    		
     		//_currentPCB.program_counter = 0;
     		//add to list so we know it is running
     		ActivePids.push(args[0]);
@@ -222,10 +233,14 @@ function shellInit() {
     	}
     	else{   		
     		_CPU.init();
-    		runAllMode = true;
-    		_currentPCB = readyQueue[0];
+    		_RunAllMode = true;
+    		_currentPCB = readyQueue.pop();
+    		_CPU.init();
     		_CPU.isExecuting = true;
-    	}
+    		
+    		}
+    		//_currentPCB = readyQueue[0];
+    		//_CPU.isExecuting = true;
 
     };
  this.commandList[this.commandList.length]=sc;

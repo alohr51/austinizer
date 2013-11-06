@@ -27,8 +27,8 @@ function Cpu() {
     this.cycle = function() {
     	//alert(_currentPCB.startLocation);
         //krnTrace("CPU cycle");
-        this.pcb = _currentPCB;
-        var currPC = _memoryManager.getPC();
+    	this.pcb = _currentPCB;
+    	var currPC = _memoryManager.getPC();
         var processKill = false;
         //var pc = _memoryManager.getPC();
         
@@ -190,16 +190,14 @@ function Cpu() {
         	krnTrace("Process "+this.pcb.pid+" Killed...");
         	_CPU.isExecuting = false;
         	}
-        	if(runAllMode){
-        		if(readyQueue.length === 0){
+        	if(_RunAllMode){
+        		if(readyQueue.length ===0){
         			runAllMode = false;
         			_CPU.isExecuting = false;
         		}
         		else{
-        			_currentPCB = readyQueue.pop();
-        			//alert("Nextprogram"+_currentPCB.pid);
+            		_currentPCB = readyQueue.pop();
         		}
-        		
         	}
         	else{
         	krnTrace("system break...");
