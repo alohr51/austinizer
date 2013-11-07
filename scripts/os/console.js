@@ -96,14 +96,14 @@ function CLIconsole() {
        this.CurrentXPosition = 0;
        this.CurrentYPosition += _DefaultFontSize + _FontHeightMargin;
        //scrolling
-       if(this.CurrentYPosition >= 490){
+       if(this.CurrentYPosition >= 460){
     	   //capture the canvas before deleting it
     	   var oldCanvas = _DrawingContext.getImageData(0,0,_Canvas.width,_Canvas.height);
     	   this.clearScreen();
     	   this.resetXY();
     	   //paste the old canvas back on with negative y coord to simulate scrolling
-    	   _DrawingContext.putImageData(oldCanvas,0,-50);
-    	   this.CurrentYPosition=450;
+    	   _DrawingContext.putImageData(oldCanvas,0,-70);
+    	   this.CurrentYPosition=410;
        }
 
     };

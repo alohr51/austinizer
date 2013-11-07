@@ -23,14 +23,21 @@ function getInstruction(args) {
 function StoreProgram(args) {
 	if(_ProgramsStored===0){
 		_coreMem.set(args, _MemoryStart);
+		_ProgramsStored++;
 	}
 	else if(_ProgramsStored===1){
 		_coreMem.set(args, _2ndMemoryStart);
+		_ProgramsStored++;
 	}
 	else if(_ProgramsStored===2){
 		_coreMem.set(args, _3rdMemoryStart);
+		_ProgramsStored++;
 	}
-	_ProgramsStored++;
+	else if(_ProgramsStored > 2){
+		_MemGood = false;
+		krnTrace("ERROR: all 3 memory partitions are full!");
+	}
+	
 }
 
 function findStart() {

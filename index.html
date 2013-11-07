@@ -30,12 +30,12 @@
    <script type="text/javascript" src="scripts/host/coreMemory.js"></script>
    <script type="text/javascript" src="scripts/os/pcb.js"></script>
    <script type="text/javascript" src="scripts/os/memoryManager.js"></script>
+   <script type="text/javascript" src="scripts/os/cpuScheduler.js"></script>
    
    <!-- Other Routines -->
    <script type="text/javascript" src="scripts/utils.js"></script>
-   <!-- <script type="text/javascript" src="http://www.labouseur.com/courses/os/projects/glados.js"></script>
-	-->
-</head>
+   <script type="text/javascript" src="http://www.labouseur.com/courses/os/projects/glados.js"></script>
+	
 
 <body onload="hostInit();">
 <audio id="swinger" src="images/swinger.mp3"></audio>	
@@ -76,9 +76,19 @@
    <div id="divConsole" style="margin:4px; width:500px; height:500px; float:left;">
       <canvas id="display"
               width="500px"
-              height="500px"
+              height="450px"
               tabindex="3">
       </canvas>
+      		<table id="CurrentProgramTable" border="1" cellpadding="2" style="margin-left:4px;">
+      		<caption>Running Programs</caption>
+      		<tr>
+      		<td>PID</td>
+      		<td>Start Location</td>
+      		<td>End Location</td>
+      		<td>Program Counter</td>
+      		</tr>
+		
+		</table>
    </div>
    
    
@@ -123,6 +133,8 @@
 			</tbody>
 		</table>
 		<div id="divLog" style="margin-left:520px;">
+		
+
          
       
       

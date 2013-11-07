@@ -45,6 +45,7 @@ var _Trace = true;
 var _coreMem = null;
 var _currentPCB = null;
 var _memoryManager = null;
+var _CpuScheduler = null;
 var _CPU = null;
 var _MemoryStart = "0000";
 var _2ndMemoryStart = "0264";
@@ -55,7 +56,7 @@ var _MemGood = false;
 var _KernelInterruptQueue = null;
 var _KernelBuffers = null;
 var _KernelInputQueue = null;
-var _RoundRobin = 1;
+var _RoundRobin = false;
 var _Quantum = 6;
 var ActivePids = new Array();
 // Standard input and output
