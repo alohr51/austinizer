@@ -18,9 +18,10 @@ function Cpu() {
     this.pcb;
     this.hexCode;
     this.pcb = new pcb();
+    
     this.init = function() {
     this.isExecuting = false;
-		
+    if(_currentPCB!= null) _currentPCB.addRow();
     };
     // TODO: Accumulate CPU usage and profiling statistics here.
     // Do the real work here. Be sure to set this.isExecuting appropriately.
@@ -28,17 +29,16 @@ function Cpu() {
     	//alert(_currentPCB.startLocation);
         //krnTrace("CPU cycle");
     	this.pcb = _currentPCB;
+    	//var processKill = false;
     	var currPC = _memoryManager.getPC();
-        var processKill = false;
         //var pc = _memoryManager.getPC();
-        
         var hexCode = _memoryManager.getInstruction(currPC).toUpperCase();
         //alert("location" + currPC);
         //alert(hexCode);
         
-        if(this.pcb.kill){
+        if(_currentPCB.kill){
         	hexCode = '00';
-        	processKill = true;
+        	//processKill = true;
         }
         
         //load the accumulator
@@ -184,23 +184,27 @@ function Cpu() {
         	_StdIn.advanceLine();
         	_StdIn.putText(">");
         	//send an update to the pcb display
-        	_CurrentPCB.update(this.pcb.xreg, this.pcb.yreg, this.pcb.accum,this.pcb.program_counter, this.pcb.zflag);
+        	_currentPCB.update(this.pcb.xreg, this.pcb.yreg, this.pcb.accum,this.pcb.program_counter, this.pcb.zflag);
         	//_StdIn.putText(">");
-        	if(processKill){
-        	krnTrace("Process "+this.pcb.pid+" Killed...");
-        	_CPU.isExecuting = false;
-        	}
+//        	if(processKill){
+//        	krnTrace("Process "+this.pcb.pid+" Killed...");
+//        	_CPU.isExecuting = false;
+//        	}
         	if(_RunAllMode){
         		if(readyQueue.length ===0){
+        			_currentPCB.deleteRow(_currentPCB.pid);
         			runAllMode = false;
         			_CPU.isExecuting = false;
         		}
         		else{
+            		_currentPCB.deleteRow(_currentPCB.pid);
             		_currentPCB = readyQueue.pop();
+            		_currentPCB.addRow();
         		}
         	}
         	else{
         	krnTrace("system break...");
+        	_currentPCB.deleteRow(_currentPCB.pid);
         	_CPU.isExecuting = false;
         	}
         	//stop execution at the end of program
@@ -233,13 +237,14 @@ function Cpu() {
         
        //bottom of while loop get next instruction
         this.pcb.program_counter++;
-        //var current = _memoryManager.getPC();
+        //get next hexCode for the Log to help debug in beginning of proj
         var nextHexCode = _memoryManager.getInstruction(this.pcb.program_counter);
-        
-        //_currentPCB = this.pcb;
+        //update the display
         _coreMem.display();
-        //real time updates
-        _CurrentPCB.update(this.pcb.xreg, this.pcb.yreg, this.pcb.accum,this.pcb.program_counter, this.pcb.zflag);
+        //real time updates above the log
+        _currentPCB.update(this.pcb.xreg, this.pcb.yreg, this.pcb.accum,this.pcb.program_counter, this.pcb.zflag);
+        //update the pcCell in the RunningPrograms Table
+        _currentPCB.updatePcCell();
         krnTrace("Current PC: " + currPC + ", NextHex: "+ nextHexCode);
     
 };
