@@ -151,6 +151,7 @@ function shellInit() {
     		var start = _memoryManager.findStart();
     		loadPCB.pid = pid;
     		loadPCB.startLocation = parseInt(_memoryManager.findStart());
+    		loadPCB.endLocation = loadPCB.startLocation + _PartitionSize;
     		readyQueue[pid]= loadPCB;
     		//store in core memory
     		_memoryManager.storeProgram(inputArray);
@@ -201,7 +202,6 @@ function shellInit() {
     		//remove the process from the readyqueue
     		readyQueue.splice(args[0], 1);
     		//maybe say slot(args[0] now open?????) sounds like a good idea.
-    		
     		//_currentPCB.program_counter = 0;
     		//add to list so we know it is running
     		ActivePids.push(args[0]);
@@ -267,8 +267,12 @@ sc.func = function(args){
 		_StdIn.putText("please enter a pid to kill");
 	}
 	else{
-	_currentPCB = readyQueue[args];
-	_currentPCB.kill = true;
+		inputPid = parseInt(args);
+		if(_currentPCB.pid === inputPid ){
+			_currentPCB.kill = true;
+			_StdIn.putText("Process: " + _currentPCB.pid + " was KILLED ");
+		}
+	
 	}
 };
 this.commandList[this.commandList.length]=sc;
