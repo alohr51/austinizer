@@ -41,6 +41,7 @@ function hostInit()
 	_coreMem.display();
 	_CPU = new Cpu();
 	_CurrentPCB = new pcb();
+	_CpuScheduler = new CpuScheduler();
 	
 	// Clear the log text box.
 	document.getElementById("taLog").value="";

@@ -152,13 +152,13 @@ function shellInit() {
     		loadPCB.pid = pid;
     		loadPCB.startLocation = parseInt(_memoryManager.findStart());
     		loadPCB.endLocation = loadPCB.startLocation + _PartitionSize;
-    		readyQueue[pid]= loadPCB;
-    		//store in core memory
     		_memoryManager.storeProgram(inputArray);
-    		_coreMem.display();
     		//check to see if the memory allowed to add the program. 
     		//an example of it not allowing it to load would be due to size constraints
     		if(_MemGood){
+        		readyQueue[pid]= loadPCB;
+        		//store in core memory
+        		_coreMem.display();
 	    		if(_Austin){
 	    			_StdIn.putText("Yeah baby yeah! Program locked and loaded with PID: "+pid);
 	    		}
@@ -203,8 +203,6 @@ function shellInit() {
     		readyQueue.splice(args[0], 1);
     		//maybe say slot(args[0] now open?????) sounds like a good idea.
     		//_currentPCB.program_counter = 0;
-    		//add to list so we know it is running
-    		ActivePids.push(args[0]);
     		_CPU.init();
     		krnTrace("CPU initialized, starting program: " + args[0]);
     		_CPU.isExecuting = true;
@@ -234,9 +232,11 @@ function shellInit() {
     	else{   		
     		_CPU.init();
     		_RunAllMode = true;
-    		_currentPCB = readyQueue.pop();
+    		_RoundRobin = true;
+    		_currentPCB = readyQueue.shift();
     		_CPU.init();
     		_CPU.isExecuting = true;
+    		
     		
     		}
     		//_currentPCB = readyQueue[0];
@@ -284,7 +284,7 @@ this.commandList[this.commandList.length]=sc;
  sc.description = "- set the quantum for RR schd";
  sc.func = function(args){
 	 _Quantum = args[0];
-	 alert(_CPU.isExecuting);
+	 _StdIn.putText("Quantum Changed to: "+_Quantum);
  };
  this.commandList[this.commandList.length]=sc;
     
