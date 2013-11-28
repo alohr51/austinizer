@@ -53,10 +53,13 @@ var _3rdMemoryStart = "0520";
 var _PartitionSize = 256;
 var _MemGood = false;
 ///file system
-var _FileSystemDeviceDriver;
+var _fileSystemDeviceDriver;
 var _FileSpaceStart = 100;
 var _FileSpaceEnd = 300;
 var _NumOfFileSystemRows=256;
+var _KeyArray=[];
+var _DataKeyArray=[];
+var _KeyHelper = 0;
 var _MasterBootRecordKey = "[0,0,0]";
 var _EmptyTrackSectorBlock = "[-1,-1,-1]";
 // OS queues
