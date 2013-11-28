@@ -52,6 +52,13 @@ var _2ndMemoryStart = "0264";
 var _3rdMemoryStart = "0520";
 var _PartitionSize = 256;
 var _MemGood = false;
+///file system
+var _FileSystemDeviceDriver;
+var _FileSpaceStart = 100;
+var _FileSpaceEnd = 300;
+var _NumOfFileSystemRows=256;
+var _MasterBootRecordKey = "[0,0,0]";
+var _EmptyTrackSectorBlock = "[-1,-1,-1]";
 // OS queues
 var _KernelInterruptQueue = null;
 var _KernelBuffers = null;

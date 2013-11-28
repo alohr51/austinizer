@@ -251,10 +251,23 @@ function shellInit() {
  sc.description = "- displays all current pids";
  sc.func = function(){
 	 if(!_CPU.isExecuting){
-		 ActivePids = [];
 		 _StdIn.putText("There are no current processes running");
 	 }
- 	_StdIn.putText(ActivePids.toString());
+	 else if(_RunAll){
+	 //current running one
+	 _StdIn.putText("Activce PIDs: " + _currentPCB.pid+", ");
+	 for(var i=0; i < readyQueue.length;i++){
+		 //other ones in ready queue
+		 _StdIn.putText(readyQueue[i].pid +", ");
+	 }
+	 }
+	 else{
+		 //just one program is running(unless you use the run command multiple times then oops)
+		 _StdIn.putText("Activce PIDs: " + _currentPCB.pid);
+		 
+	 }
+ 
+ 	
  };
 this.commandList[this.commandList.length]=sc;
  
@@ -1019,7 +1032,7 @@ function stateList(args){
     if (args.length > 0)
     {
     	for(var i = 0;i<initial.length;i++){
-    		if(args === initial[i]){
+    		if(args[0] === initial[i]){
     			found = true;
     			_StdIn.putText("State: " + state[i]);
     			_StdIn.advanceLine();

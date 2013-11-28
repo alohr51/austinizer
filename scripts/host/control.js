@@ -39,10 +39,15 @@ function hostInit()
 	_coreMem = new coreMemory();
 	_coreMem.init();
 	_coreMem.display();
+	//cpu
 	_CPU = new Cpu();
 	_CurrentPCB = new pcb();
 	_CpuScheduler = new CpuScheduler();
 	
+	//setup file system
+	_fileSystemDeviceDriver = new fileSystemDeviceDriver();
+	_fileSystemDeviceDriver.init();
+	_fileSystemDeviceDriver.display();
 	// Clear the log text box.
 	document.getElementById("taLog").value="";
 
