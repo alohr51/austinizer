@@ -16,10 +16,12 @@
 function Cpu() {
     this.isExecuting = false;
     this.hexCode;
-    this.lineWrap;
+    this.wrapHelperY;
+    this.wrapHelperX;
     this.init = function() {
     this.isExecuting = false;
-    this.lineWrap = 0;
+    this.wrapHelperY = 0;
+    this.wrapHelperX = 0;
     if(_currentPCB!= null) _currentPCB.addRow();
     };
     // TODO: Accumulate CPU usage and profiling statistics here.
@@ -28,6 +30,7 @@ function Cpu() {
     	//no need to context switch if there is only 1 program left
     	//give it all the cpu!
         if(_RoundRobin && readyQueue.length != 0){
+        	if(_FCFS)_Quantum = 1000000007;
         	if(_OSclock % _Quantum === 0){
         		_CpuScheduler.contextSwitch();
         		//alert("switch to: "+_currentPCB.pid+"with pc: " + _currentPCB.program_counter+"with hex: " + hexcode);
@@ -123,6 +126,17 @@ function Cpu() {
             krnTrace("code A0 loaded yreg with: "+userConstant);
         }
         
+        //load acc direct
+        else if (hexCode === "AD") {
+        	var memLocation = parseInt(_memoryManager.getInstruction(currPC+ 2) + _memoryManager.getInstruction(currPC + 1),16);
+            var decAddress= memLocation+parseInt(_currentPCB.startLocation);
+        	//load y register
+            _currentPCB.accum = _coreMem.Memory[decAddress];
+            //step over the constant
+            _currentPCB.program_counter+=2;
+            krnTrace("code AD loaded accum direct with: "+memLocation);
+        }
+        
         //Load yReg from memory
         else if (hexCode === "AC") {
             var memLocation = parseInt(_memoryManager.getInstruction(currPC+2) + _memoryManager.getInstruction(currPC + 1),16);
@@ -152,7 +166,9 @@ function Cpu() {
             if(_currentPCB.xreg === 1){
             	//get the value from Y reg
             	var yreg = parseInt(_currentPCB.yreg).toString();
+        		if(this.wrapHelperX % 50 ===0)_StdIn.advanceLine();
             	for(var i = 0; i < yreg.length;i++){
+            		this.wrapHelperX+=5;
             		_StdIn.putText( yreg.charAt(i));
             		_StdIn.putText(" ");
             	}
@@ -163,19 +179,19 @@ function Cpu() {
             	var currentdec = _coreMem.Memory[decAddress];
             	
             	while(currentdec != '00'){
-            		this.lineWrap++;
+            		this.wrapHelperY++;
             		var key = parseInt(currentdec,16);
             		var chr = String.fromCharCode(key);
             		//format output with prompt and advance line
             		_StdIn.putText(chr);
-            		if(this.lineWrap % 47 ===0)_StdIn.advanceLine();
+            		if(this.wrapHelperY % 47 ===0)_StdIn.advanceLine();
 //            		_StdIn.putText(">");
             		
             		//move address up one then get next address from core mem
             		decAddress++;
             		currentdec = _coreMem.Memory[decAddress];
             	}            }
-        	krnTrace("code FF ran with system call: ");
+        	krnTrace("code FF ran with system call");
         }
         //no op just increment pc
         else if(hexCode ==="EA"){
@@ -197,7 +213,10 @@ function Cpu() {
         	if(_RunAllMode){
         		//if the readyQueue is empty delete the process from the table
         		//shutoff runall mode and stop cpu executing
-        		if(readyQueue.length ===0){
+        		if(readyQueue.length!=0){
+        			_CpuScheduler.contextSwitch();
+        		}
+        		else if(readyQueue.length ===0 ){
         			_currentPCB.deleteRow(_currentPCB.pid);
         			_RunAllMode = false;
         			_RoundRobin = false;
