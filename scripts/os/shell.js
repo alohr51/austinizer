@@ -233,6 +233,7 @@ function shellInit() {
     		_CPU.init();
     		_RunAllMode = true;
     		_RoundRobin = true;
+    		_FCFS = true;
     		_currentPCB = readyQueue.shift();
     		_CPU.init();
     		_CPU.isExecuting = true;
@@ -307,8 +308,72 @@ this.commandList[this.commandList.length]=sc;
  sc.description = "- create a file";
  sc.func = function(args){
 	 filename = args[0];
-	 if(_fileSystemDeviceDriver.create(filename));
-	 	_StdIn.putText(filename+" created successfully!");
+	 if(_isFormatted){
+		 if(_fileSystemDeviceDriver.create(filename));
+		 	_StdIn.putText(filename+" created successfully!");
+	 }
+	 else{
+		 _StdIn.putText("Data is corrupt, please format first");
+	 }
+ };
+ this.commandList[this.commandList.length]=sc;
+ 
+//Write
+ sc = new ShellCommand();
+ sc.command ="write";
+ sc.description = "<filename> <data> - writes to a file";
+ sc.func = function(args){
+	 var filename = args[0];
+	 var data = args.join(" ");
+	 //get the data with spaces
+	 data = data.substring(filename.length + 1);
+	 if(_isFormatted){
+		 if(_fileSystemDeviceDriver.write(filename,data)){
+		 	_StdIn.putText("write to "+filename+" was successfull!");
+		 }
+		 	else{
+		 		_StdIn.putText("File Not Found!");
+		 	}
+	 }
+	 else{
+		 _StdIn.putText("Data is corrupt, please format first");
+	 }
+ };
+ this.commandList[this.commandList.length]=sc;
+ 
+//Read
+ sc = new ShellCommand();
+ sc.command ="read";
+ sc.description = "<filename> -reads to a file";
+ sc.func = function(args){
+	 var filename = args[0];
+	 if(_isFormatted){
+		 var data = _fileSystemDeviceDriver.read(filename);
+		 _StdIn.putText(data);
+	 }
+	 else{
+		 _StdIn.putText("Data is corrupt, please format first");
+	 }
+ };
+ this.commandList[this.commandList.length]=sc;
+ 
+//delete
+ sc = new ShellCommand();
+ sc.command ="delete";
+ sc.description = "<filename> -deletes a file";
+ sc.func = function(args){
+	 var filename = args[0];
+	 if(_isFormatted){
+		 if(_fileSystemDeviceDriver.deleteFile(filename)){
+		 	_StdIn.putText(filename+" was successfully deleted!");
+		 }
+		 	else{
+		 		_StdIn.putText("File Not Found!");
+		 	}
+	 }
+	 else{
+		 _StdIn.putText("Data is corrupt, please format first");
+	 }
  };
  this.commandList[this.commandList.length]=sc;
  

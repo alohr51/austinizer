@@ -54,19 +54,17 @@ var _PartitionSize = 256;
 var _MemGood = false;
 ///file system
 var _fileSystemDeviceDriver;
-var _FileSpaceStart = 100;
-var _FileSpaceEnd = 300;
+var _isFormatted = false;
 var _NumOfFileSystemRows=256;
 var _KeyArray=[];
 var _DataKeyArray=[];
-var _KeyHelper = 0;
-var _MasterBootRecordKey = "[0,0,0]";
-var _EmptyTrackSectorBlock = "[-1,-1,-1]";
+var _FileSystem=[];
 // OS queues
 var _KernelInterruptQueue = null;
 var _KernelBuffers = null;
 var _KernelInputQueue = null;
 var _RoundRobin = false;
+var _FCFS = false;
 var _Quantum = 6;
 var ActivePids = new Array();
 // Standard input and output

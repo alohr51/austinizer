@@ -5,29 +5,16 @@ function fileSystemDeviceDriver() {
     // Override the base method pointers.
 //    this.driverEntry = krnFileSystemDriverEntry;
 //    this.isr = null;
-    this.FileSystem = new Array();
     this.format = fsFormat;
     this.init = fsInit;
-    //this.test = create;
+    this.test = getStorageIndex;
     this.create = createFile;
-//    // Main functionality
-//    this.format = krnFormat;
-//    this.create = krnCreate;
-//    this.write = krnWrite;
-//    this.read = krnRead;
-//    //this.delete = krnDelete;
-//    this.listFiles = krnlistFiles;
-//    // Helper functions
-//    this.findOpenDirectoryBlock = krnFindOpenDirectoryBlock;
-//    this.findOpenFileBlock = krnFindOpenFileBlock;
-//    this.setValueOccupied = krnSetValueOccupied;
-//    this.getMatchingDirectory = krnGetMatchingDirectory;
-//    this.getAllLinkedFileBlocks = krnGetAllLinkedFileBlocks;
-//    this.formatLineWithKey = krnFormatLineWithKey;
-//    this.getOccupiedDirectories = krnGetOccupiedDirectories;
-//    this.fillEmptySpace = krnFillEmptySpace;
-//    this.parseKey = parseKey;
+    this.write = writeToFile;
+    this.read = readFile;
+    this.deleteFile = deleteFile;
+
 }
+//object used to keep track of files and data
 function fsField(occupied,track,sector,block,data)
 {
 this.occupied=occupied,
@@ -36,28 +23,46 @@ this.sector=sector,
 this.block=block,
 this.data = data;
 }
-
+//a toString for fsField
 fsField.prototype.toString = function fsFieldToString() {
-	  var ret = + this.occupied + "," + this.track + "," + this.sector + "," + this.block+","+this.data;
-	  return ret;
+	  var fsString = + this.occupied + "," + this.track + "," + this.sector + "," + this.block+","+this.data;
+	  return fsString;
 	};
 	
 function fsInit() {
 	document.getElementById("fileDisplay").innerHTML = "Corrupt- Please Format";
 	//create MBR
 	var mbrKey = JSON.stringify("000");
-	localStorage[mbrKey] = new fsField(1,-1,-1,-1,"MBR");
+	mbrObj= new fsField(1,-1,-1,-1,"MBR");
+	storeMBR = JSON.stringify(mbrObj);
+	localStorage[mbrKey] = storeMBR;
+	_FileSystem[0]= new fsField(1,-1,-1,-1,"MBR");
     //Initialize array with -'s
-    var i = 0;
+    var i = 1;
     while (i <= _NumOfFileSystemRows) {
     	var fsF = new fsField(0,'-','-','-',"");
-        this.FileSystem[i] = fsF;
+        _FileSystem[i] = fsF;
         i++;
     }
-    
-}
+    //update display from storage if there are any that persisted
+    for (var t = 0; t < 4; t++) {
+        for (var s = 0; s < 8; s++) {
+		    for (var b = 0; b < 8; b++) {
+			    var normalKey=(t.toString()+s.toString()+b.toString());
+			    var JsonKey = JSON.stringify(normalKey);
+			    if(localStorage.getItem(JsonKey)!=null){
+			    	var fsFileObj=(localStorage.getItem(JsonKey));
+			    	var obj = JSON.parse(fsFileObj);
+			    	var replaceFsFile = new fsField(obj.occupied,obj.track,obj.sector,obj.block,obj.data);
+			    	_FileSystem[getKeyIndex(normalKey)]=replaceFsFile;
+			    }//end if
+		    }//end b loop
+        }//end s loop
+    }// end t loop
+}//end function
 
 function fsFormat() {
+	_isFormatted = true;
     var display = document.getElementById("fileDisplay");
     display.innerHTML = "";
     var arrayIter=0;
@@ -74,14 +79,36 @@ function fsFormat() {
                 	//filler from utils
                 	row = displayfiller(getrow.toString(), "000") + "]: ";
                 	if(arrayIter<=_NumOfFileSystemRows){
-                	row = row + displayfiller(this.FileSystem[arrayIter].toString(), "00") + " ";
+                	row = row + displayfiller(_FileSystem[arrayIter].toString(), "00") + " ";
+                	
                 	arrayIter++;
                 	}
 
                 }//end b loop
             }//end s loop
         }//end t loop
-}
+}//end function
+
+function updateFileSystemDisplay(){
+    var display = document.getElementById("fileDisplay");
+    display.innerHTML = "";
+    var arrayIter=0;
+    var row="";
+        for (var t = 0; t < 4; t++) {
+            for (var s = 0; s < 8; s++) {
+                for (var b = 0; b < 8; b++) {
+                	display.innerHTML = display.innerHTML + "<div>" + row + "</div>";
+                	var getrow = "["+t+","+s+","+b;
+                	//filler from utils
+                	row = displayfiller(getrow.toString(), "000") + "]: ";
+                	if(arrayIter<=_NumOfFileSystemRows){
+                	row = row + displayfiller(_FileSystem[arrayIter].toString(), "00") + " ";
+                	arrayIter++;
+                	}
+                }//end b loop
+            }//end s loop
+        }//end t loop
+}//end function
 
 function getNextFileKey() {
 	for(var i = 0;i<_KeyArray.length;i++){
@@ -90,7 +117,7 @@ function getNextFileKey() {
 			return key;
 			break;
 		}
-}
+	}
 }
 
 function getNextDataKey() {
@@ -102,47 +129,144 @@ function getNextDataKey() {
 			return key;
 			break;
 		}
-}
+	}
 }
 
 function createFile(fileName){
 	var fileKey = getNextFileKey();
+	//fileKeyIndex will tell us the index in the FileSystem array to update for user display
+	var fileKeyIndex = getKeyIndex(JSON.parse(fileKey));
 	var dataKey = JSON.parse(getNextDataKey());
-	alert(dataKey);
+	//set T S B for the fsFile object
 	var track=dataKey.substring(0,1);
 	var sector = dataKey.substring(1,2);
 	var block = dataKey.substring(2,3);
-	var createObj = new fsField(1,track, sector,block,filename);
+	var createObj = new fsField(1,track, sector,block,topOff(filename));
 	//alert("fileKey: "+fileKey + "dataKey: "+dataKey+"  t:"+track+"  s:"+sector+"  b: "+block);
 	localStorage.setItem(fileKey,JSON.stringify(createObj));
 	if(localStorage[fileKey]!=null){
+		//update the display
+		_FileSystem[fileKeyIndex]=createObj;
+		updateFileSystemDisplay();
 		return true;
 	}
 	else{
 		return false;
 	}
-	}
-
-function getNextBlock() {
-    var keyIntValue = 0;
-    var valueArray;
-    var occupiedBit;
-    for (key in localStorage) {
-        keyIntValue = parseKey(key);
-        //100 to 300 is the file space
-        if (keyIntValue >= _FileSpaceStart && keyIntValue <= _FileSpaceEnd) {
-            valueArray = JSON.parse(localStorage[key]);
-            occupiedBit = valueArray[0];
-            if (occupiedBit === 0) {
-                // Return the TSB location of the open file block
-                return (key);
-            }
-        }
-    }
-    //none are open
-    return null;
 }
 
+function writeToFile(filename,data){
+	var track=-1;
+	var sector = -1;
+	var block = -1;
+	for(var i = 1; i < _FileSystem.length;i++){
+		if(_FileSystem[i].data.length>=1){
+			//get only the file without filler
+			var fname = _FileSystem[i].data.replace(/-/g, '');
+			if(fname===filename){
+				track = _FileSystem[i].track;
+				sector= _FileSystem[i].sector;
+				block = _FileSystem[i].block;
+			}
+			
+		}
+	}
+	var objWrite = new fsField(1,track,sector,block,data);
+	if(objWrite.track===-1&&objWrite.sector===-1){
+		krnTrace("File Not Found");
+		return false;
+	}
+	else{
+	var combinedKey = track.toString()+sector.toString()+block.toString();
+	var arrayKey = getKeyIndex(combinedKey);
+	var storeKey = JSON.stringify(combinedKey);
+	_FileSystem[arrayKey] = objWrite;
+	var JsonWriteObj = JSON.stringify(objWrite);
+	localStorage.setItem(storeKey,JsonWriteObj);
+	updateFileSystemDisplay();
+	return true;
+	}	
+}
+//Read
+function readFile(filename){
+	var track=-1;
+	var sector = -1;
+	var block = -1;
+	var data = "";
+	for(var i = 1; i < _FileSystem.length;i++){
+		if(_FileSystem[i].data.length>=1){
+			//get only the file without filler
+			var fname = _FileSystem[i].data.replace(/-/g, '');
+			if(fname===filename){
+				track = _FileSystem[i].track;
+				sector= _FileSystem[i].sector;
+				block = _FileSystem[i].block;
+				data = _FileSystem[i].data;
+			}
+		}
+	}
+	var objRead = new fsField(1,track,sector,block,data);
+	//make sure we actually found the file
+	if(objRead.track===-1 && objRead.sector===-1){
+		return "File Not Found";
+	}
+	else{
+		//get the T S B of where the data is located
+		var combinedKey = track.toString()+sector.toString()+block.toString();
+		//prepare the key for localStorage
+		var storeKey = JSON.stringify(combinedKey);
+		var readme = JSON.parse(localStorage.getItem(storeKey,objRead));
+		updateFileSystemDisplay();
+		if(readme.data===""){
+			return " No Data in file";
+		}
+		else{
+			return readme.data;
+		}
+	}
+}
+
+function deleteFile(filename){
+	var currentPosition = -1;
+	var track=-1;
+	var sector = -1;
+	var block = -1;
+	var data = "";
+	for(var i = 1; i < _FileSystem.length;i++){
+		if(_FileSystem[i].data.length>=1){
+			//get only the file without filler
+			var fname = _FileSystem[i].data.replace(/-/g, '');
+			if(fname===filename){
+				currentPosition = i;
+				track = _FileSystem[i].track;
+				sector= _FileSystem[i].sector;
+				block = _FileSystem[i].block;
+				data = _FileSystem[i].data;
+			}
+		}
+	}
+	var objRead = new fsField(1,track,sector,block,data);
+	//make sure we actually found the file
+	if(objRead.track===-1 && objRead.sector===-1){
+		return false;
+	}
+	else{
+		var combinedKey = track.toString()+sector.toString()+block.toString();
+		var arrayKey = getKeyIndex(combinedKey);
+		//delete the file data in the array
+		 _FileSystem[arrayKey] = new fsField(0,-1,-1,-1,"");
+		 //delete the file directory
+		 _FileSystem[currentPosition] = new fsField(0,'-','-','-',"");
+		 var storeFileKey = getStorageIndex(currentPosition);
+		 var storeDataKey = getStorageIndex(arrayKey);
+		 alert("filekey: " + storeFileKey + "storedatakey: "+storeDataKey);
+		 //remove the directory and its data
+		 localStorage.removeItem(storeFileKey);
+		 localStorage.removeItem(storeDataKey);
+		 updateFileSystemDisplay();
+		 return true;
+	}
+}
 
 function topOff(data) {
     var length = data.length;
@@ -152,8 +276,42 @@ function topOff(data) {
     }
     return data;
 }
-
-
+//helps us convert the internal storage keys to the 
+//display keys array that is used for user display
+function getKeyIndex(storageKey){
+	var index = 0;
+    for (var t = 0; t < 4; t++) {
+        for (var s = 0; s < 8; s++) {
+            for (var b = 0; b < 8; b++) {
+            	var getrow = t.toString()+s.toString()+b.toString();
+            	if(storageKey===getrow){
+            		return index;
+            	}
+            	else{
+            		index++;
+            	}
+            }
+        }
+    }
+}
+//find the storage key given the array key
+function getStorageIndex(keyIndex){
+	var index = 0;
+	outerloop:
+    for (var t = 0; t < 4; t++) {
+        for (var s = 0; s < 8; s++) {
+            for (var b = 0; b < 8; b++) {
+            	if(index===keyIndex){
+            		return( JSON.stringify(t.toString()+s.toString()+b.toString()));
+            		break outerloop;
+            	}
+            	else{
+            		index++;
+            	}
+            }
+        }
+    }
+}
 
 
 
