@@ -15,13 +15,11 @@
 
 function Cpu() {
     this.isExecuting = false;
-    this.pcb;
     this.hexCode;
-    this.lineAdvancer;
-    this.pcb = new pcb();
+    this.lineWrap;
     this.init = function() {
     this.isExecuting = false;
-    this.lineAdvancer = 0;
+    this.lineWrap = 0;
     if(_currentPCB!= null) _currentPCB.addRow();
     };
     // TODO: Accumulate CPU usage and profiling statistics here.
@@ -32,6 +30,7 @@ function Cpu() {
         if(_RoundRobin && readyQueue.length != 0){
         	if(_OSclock % _Quantum === 0){
         		_CpuScheduler.contextSwitch();
+        		alert("switch to: "+_currentPCB.pid+"with pc: " + _currentPCB.program_counter+"with hex: " + hexcode);
         	}
         }
         //helps kill a process in instruction "00"
@@ -164,12 +163,12 @@ function Cpu() {
             	var currentdec = _coreMem.Memory[decAddress];
             	
             	while(currentdec != '00'){
-            		this.lineAdvancer++;
+            		this.lineWrap++;
             		var key = parseInt(currentdec,16);
             		var chr = String.fromCharCode(key);
             		//format output with prompt and advance line
             		_StdIn.putText(chr);
-            		if(this.lineAdvancer % 47 ===0)_StdIn.advanceLine();
+            		if(this.lineWrap % 47 ===0)_StdIn.advanceLine();
 //            		_StdIn.putText(">");
             		
             		//move address up one then get next address from core mem
@@ -193,7 +192,7 @@ function Cpu() {
         	//_StdIn.putText(">");
         	
         	if(processKill){
-        	krnTrace("Process "+this.pcb.pid+" Killed...");
+        	krnTrace("Process "+_currentPCB.pid+" Killed...");
         	}
         	if(_RunAllMode){
         		//if the readyQueue is empty delete the process from the table
@@ -210,7 +209,7 @@ function Cpu() {
                 	_StdIn.putText(">");
         			
         		}
-        		//the process has ended. Mark finished trus
+        		//the process has ended. Mark finished true
         		//and take it off the table of running processes
         		else if(_RoundRobin){
         			_currentPCB.finished = true;

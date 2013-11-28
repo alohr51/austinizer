@@ -31,6 +31,7 @@
    <script type="text/javascript" src="scripts/os/pcb.js"></script>
    <script type="text/javascript" src="scripts/os/memoryManager.js"></script>
    <script type="text/javascript" src="scripts/os/cpuScheduler.js"></script>
+   <script type="text/javascript" src="scripts/os/fileSystemDeviceDriver.js"></script>
    
    <!-- Other Routines -->
    <script type="text/javascript" src="scripts/utils.js"></script>
@@ -122,13 +123,12 @@
 				<tr>
 					<td><textarea name="taProgramInput" id="taProgramInput" rows="5"
 							cols="48">Enter user Program</textarea></td>
-					<td><button name='prog1' id='prog1' onclick='addPrg1()'type="button">Program 1</button></td>
-					<td><button name='prog2' id='prog2' onclick='addPrg2()'type="button">Program 2</button></td>
+					<td><button name='prog1' id='prog1' onclick='addPrg1()'type="button">Program 1</button>
+					<button name='prog2' id='prog2' onclick='addPrg2()'type="button">Program 2</button></td>
 				</tr>
 				<tr>
-					<td>Memory<div id="MemoryDisplay"
-							style="margin-left: 4px; width: 400px; height: 155px;"></div></td>
-					<td></td>
+					<td>Memory<div id="MemoryDisplay"style="margin-left: 4px; width: 400px; height: 155px;"></div></td>
+					<td>File System<div id="fileDisplay" style="margin-left: 4px; width: 300px; height: 155px;"></div></td>
 				</tr>
 			</tbody>
 		</table>

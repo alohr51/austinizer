@@ -64,3 +64,10 @@ h3 {
     overflow: scroll;
     width: 400px;
 }
+#fileDisplay{
+    background: none repeat scroll 0 0 #FFFFFF;
+    height: 228px;
+    overflow: scroll;
+    white-space:nowrap;
+    width: 400px;
+}
