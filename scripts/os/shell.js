@@ -300,6 +300,35 @@ this.commandList[this.commandList.length]=sc;
 	 _StdIn.putText("Quantum Changed to: "+_Quantum);
  };
  this.commandList[this.commandList.length]=sc;
+ 
+//Create
+ sc = new ShellCommand();
+ sc.command ="create";
+ sc.description = "- create a file";
+ sc.func = function(args){
+	 filename = args[0];
+	 if(_fileSystemDeviceDriver.create(filename));
+	 	_StdIn.putText(filename+" created successfully!");
+ };
+ this.commandList[this.commandList.length]=sc;
+ 
+//test
+ sc = new ShellCommand();
+ sc.command ="test";
+ sc.description = "- test";
+ sc.func = function(args){
+_fileSystemDeviceDriver.test();
+ };
+ this.commandList[this.commandList.length]=sc;
+ 
+ //Format
+ sc = new ShellCommand();
+ sc.command ="format";
+ sc.description = "- formats the File system driver.";
+ sc.func = function(args){
+	 _fileSystemDeviceDriver.format();
+ };
+ this.commandList[this.commandList.length]=sc;
     
     //date
     sc = new ShellCommand();

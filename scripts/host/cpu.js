@@ -30,7 +30,7 @@ function Cpu() {
         if(_RoundRobin && readyQueue.length != 0){
         	if(_OSclock % _Quantum === 0){
         		_CpuScheduler.contextSwitch();
-        		alert("switch to: "+_currentPCB.pid+"with pc: " + _currentPCB.program_counter+"with hex: " + hexcode);
+        		//alert("switch to: "+_currentPCB.pid+"with pc: " + _currentPCB.program_counter+"with hex: " + hexcode);
         	}
         }
         //helps kill a process in instruction "00"

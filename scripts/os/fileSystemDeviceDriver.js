@@ -6,8 +6,10 @@ function fileSystemDeviceDriver() {
 //    this.driverEntry = krnFileSystemDriverEntry;
 //    this.isr = null;
     this.FileSystem = new Array();
-    this.display = fsDisplay;
+    this.format = fsFormat;
     this.init = fsInit;
+    //this.test = create;
+    this.create = createFile;
 //    // Main functionality
 //    this.format = krnFormat;
 //    this.create = krnCreate;
@@ -41,19 +43,21 @@ fsField.prototype.toString = function fsFieldToString() {
 	};
 	
 function fsInit() {
+	document.getElementById("fileDisplay").innerHTML = "Corrupt- Please Format";
+	//create MBR
+	var mbrKey = JSON.stringify("000");
+	localStorage[mbrKey] = new fsField(1,-1,-1,-1,"MBR");
     //Initialize array with -'s
     var i = 0;
     while (i <= _NumOfFileSystemRows) {
-    	var fsF = new fsField(-1,'-','-','-',"");
+    	var fsF = new fsField(0,'-','-','-',"");
         this.FileSystem[i] = fsF;
         i++;
     }
-    this.display();
+    
 }
 
-
-
-function fsDisplay() {
+function fsFormat() {
     var display = document.getElementById("fileDisplay");
     display.innerHTML = "";
     var arrayIter=0;
@@ -61,79 +65,63 @@ function fsDisplay() {
         for (var t = 0; t < 4; t++) {
             for (var s = 0; s < 8; s++) {
                 for (var b = 0; b < 8; b++) {
+                	var key = JSON.stringify(t+""+s+""+b);
+                	_KeyArray.push(key);
+                	_DataKeyArray.push(key);
                 	display.innerHTML = display.innerHTML + "<div>" + row + "</div>";
-                	var getrow = t+","+s+","+b;
+                	var getrow = "["+t+","+s+","+b;
                 	//alert(getrow);
                 	//filler from utils
-                	row = displayfiller(getrow.toString(), "000") + ": ";
+                	row = displayfiller(getrow.toString(), "000") + "]: ";
                 	if(arrayIter<=_NumOfFileSystemRows){
                 	row = row + displayfiller(this.FileSystem[arrayIter].toString(), "00") + " ";
                 	arrayIter++;
                 	}
-                	
-                	
-                }
-            }
-            }
-    
-}
 
-
-function krnFormat() {
-    try {
-        //clear to be safe
-        localStorage.clear();
-        var key = "";
-        var value = "";
-        for (var t = 0; t < 4; t++) {
-            for (var s = 0; s < 8; s++) {
-                for (var b = 0; b < 8; b++) {
-                    //get keys(track is 0-3, sector and block are 0-7
-                    key = getJSONKey(t, s, b);
-                    //the default value
-                    fsValue = getJSONValue(0, -1, -1, -1, "");
-                    localStorage[key] = value;
                 }//end b loop
             }//end s loop
         }//end t loop
-        
-        //init the master boot record
-        localStorage[_MasterBootRecordKey] = fileSystemValue(1, -1, -1, -1, "MBR");
-        return true;
-    } catch (error) {
-        return false;
-    }
 }
 
-//key for file system
-function getJSONKEY(track, sector, block) {
-    return JSON.stringify([track, sector, block]);
+function getNextFileKey() {
+	for(var i = 0;i<_KeyArray.length;i++){
+		var key =  _KeyArray.shift();
+		if(localStorage.getItem(key)===null){
+			return key;
+			break;
+		}
 }
-// Basic value in the file system (constructor)
-function getJSONValue(filled, track, sector, block, data) {
-    return JSON.stringify([filled, track, sector, block, krnFillEmptySpace(data)]);
 }
 
-
-function getNextKey() {
-    var keyIntValue = 0;
-    var valueArray;
-    var occupiedBit;
-    for (key in localStorage) {
-        keyIntValue = parseKey(key);
-        // Ensure we are iterating through directory space only
-        if (keyIntValue >= 0 && keyIntValue <= 77) {
-            valueArray = JSON.parse(localStorage[key]);
-            occupiedBit = valueArray[0];
-            if (occupiedBit === 0) {
-                // Return the TSB location of the open directory block
-                return (key);
-            }
-        }
-    }
-    // If no directory blocks are open return null
-    return null;
+function getNextDataKey() {
+	for(var i = 0;i<_DataKeyArray.length;i++){
+		var key =  _DataKeyArray.shift();
+		var keyParse = JSON.parse(key);
+		//make sure we are in correct track using substring
+		if(localStorage.getItem(key)===null&&keyParse.substring(0,1)!=0){
+			return key;
+			break;
+		}
 }
+}
+
+function createFile(fileName){
+	var fileKey = getNextFileKey();
+	var dataKey = JSON.parse(getNextDataKey());
+	alert(dataKey);
+	var track=dataKey.substring(0,1);
+	var sector = dataKey.substring(1,2);
+	var block = dataKey.substring(2,3);
+	var createObj = new fsField(1,track, sector,block,filename);
+	//alert("fileKey: "+fileKey + "dataKey: "+dataKey+"  t:"+track+"  s:"+sector+"  b: "+block);
+	localStorage.setItem(fileKey,JSON.stringify(createObj));
+	if(localStorage[fileKey]!=null){
+		return true;
+	}
+	else{
+		return false;
+	}
+	}
 
 function getNextBlock() {
     var keyIntValue = 0;
@@ -156,7 +144,14 @@ function getNextBlock() {
 }
 
 
-
+function topOff(data) {
+    var length = data.length;
+    //top off the 60 bit data string
+    for (var i = length; i < 60; i++) {
+        data += "-";
+    }
+    return data;
+}
 
 
 

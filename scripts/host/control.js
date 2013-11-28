@@ -47,7 +47,7 @@ function hostInit()
 	//setup file system
 	_fileSystemDeviceDriver = new fileSystemDeviceDriver();
 	_fileSystemDeviceDriver.init();
-	_fileSystemDeviceDriver.display();
+	//_fileSystemDeviceDriver.display();
 	// Clear the log text box.
 	document.getElementById("taLog").value="";
 
