@@ -65,6 +65,7 @@ var _KernelBuffers = null;
 var _KernelInputQueue = null;
 var _RoundRobin = false;
 var _FCFS = false;
+var _Priority = false;
 var _Quantum = 6;
 var ActivePids = new Array();
 // Standard input and output

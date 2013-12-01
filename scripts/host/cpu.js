@@ -29,8 +29,8 @@ function Cpu() {
     this.cycle = function() {
     	//no need to context switch if there is only 1 program left
     	//give it all the cpu!
+    	if(_FCFS)_Quantum = 1000000007;
         if(_RoundRobin && readyQueue.length != 0){
-        	if(_FCFS)_Quantum = 1000000007;
         	if(_OSclock % _Quantum === 0){
         		_CpuScheduler.contextSwitch();
         		//alert("switch to: "+_currentPCB.pid+"with pc: " + _currentPCB.program_counter+"with hex: " + hexcode);
@@ -38,6 +38,16 @@ function Cpu() {
         }
         //helps kill a process in instruction "00"
     	var processKill = false;
+    	//_currentPCB = readyQueue.shift();
+//    	if(readyQueue.length != 0){
+//    		for(var a = 0; a < readyQueue.length;a++){
+//    			if(readyQueue[a] != null){
+//    				_currentPCB = readyQueue[a];
+//    				break;
+//    			}
+//    		}
+//    	}
+    		
     	var currPC = _memoryManager.getPC();
         var hexCode = _memoryManager.getInstruction(currPC).toUpperCase();
         
@@ -213,34 +223,41 @@ function Cpu() {
         	if(_RunAllMode){
         		//if the readyQueue is empty delete the process from the table
         		//shutoff runall mode and stop cpu executing
-        		if(readyQueue.length!=0){
-        			_CpuScheduler.contextSwitch();
-        		}
-        		else if(readyQueue.length ===0 ){
-        			_currentPCB.deleteRow(_currentPCB.pid);
-        			_RunAllMode = false;
-        			_RoundRobin = false;
-        			_CPU.isExecuting = false;
-        			//all programs ran, free memory and reset programs stored
+//        		if(readyQueue.length!=0){
+//        			_CpuScheduler.contextSwitch();
+//        		}
+        		if(readyQueue.length ===0){
+        			//all programs ran, free memory and reset programs stored and PID
         			_coreMem.init();
+        			_ProgramsStored = 0;
+        			_Pid = 0;
+        			_currentPCB.deleteRow(_currentPCB.pid);
+            		_RunAllMode = false;
+            		_RoundRobin = false;
+        			_CPU.isExecuting = false;
         			_ProgramsStored = 0;
                 	_StdIn.advanceLine();
                 	_StdIn.putText(">");
         			
+        			
         		}
         		//the process has ended. Mark finished true
         		//and take it off the table of running processes
-        		else if(_RoundRobin){
+        		if(_RoundRobin && readyQueue.length !=0){
         			_currentPCB.finished = true;
         			_currentPCB.deleteRow(_currentPCB.pid);
         			
         		}
         		//round robin is off and the first process has finished
         		//delete it from the table and grab the next process.
-        		else{
+        		if(readyQueue.length !=0 && _currentPCB.finished){
             		_currentPCB.deleteRow(_currentPCB.pid);
             		_currentPCB = readyQueue.shift();
-            		_currentPCB.addRow();
+            		_currentPCB.location = "running";
+            		_currentPCB.updatePcCell(_currentPCB.pid,_currentPCB.location);
+            		_currentPCB.program_counter=0;
+            		//_currentPCB.addRow();
+            		_currentPCB.program_counter++;
         		}
         	}
         	else{
@@ -249,10 +266,6 @@ function Cpu() {
         	_CPU.isExecuting = false;
         	}
         	//stop execution at the end of program
-        	
-        	
-        	
-        	
         }
         //Increment byte
         else if(hexCode ==="EE"){
@@ -285,7 +298,7 @@ function Cpu() {
         //real time updates above the log
         _currentPCB.update(_currentPCB.xreg, _currentPCB.yreg, _currentPCB.accum,_currentPCB.program_counter, _currentPCB.zflag);
         //update the pcCell in the RunningPrograms Table
-        _currentPCB.updatePcCell(_currentPCB.pid);
+        _currentPCB.updatePcCell(_currentPCB.pid,_currentPCB.location);
         krnTrace("Current PC: " + currPC + ", NextHex: "+ nextHexCode);
         }
     
