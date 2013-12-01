@@ -9,8 +9,12 @@ function CpuScheduler() {
     	var savePCB = new pcb();
     	//if the process is not finished put it back on the readyQueue
     	//then pull the next process off.
+    	_currentPCB.location = "ready queue";
+    	_currentPCB.updatePcCell(_currentPCB.pid,_currentPCB.location);
     	savePCB= _currentPCB;
     	_currentPCB = readyQueue.shift();
+    	_currentPCB.location = "running";
+    	_currentPCB.updatePcCell(_currentPCB.pid,_currentPCB.location);
     	if(!savePCB.finished){
     		readyQueue.push(savePCB);
     	}

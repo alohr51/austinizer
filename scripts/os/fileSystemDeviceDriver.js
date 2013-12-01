@@ -7,10 +7,11 @@ function fileSystemDeviceDriver() {
 //    this.isr = null;
     this.format = fsFormat;
     this.init = fsInit;
-    this.test = getStorageIndex;
+    this.test = updateFileSystemDisplay;
     this.create = createFile;
     this.write = writeToFile;
     this.read = readFile;
+    this.list = listAllFiles;
     this.deleteFile = deleteFile;
 
 }
@@ -254,12 +255,11 @@ function deleteFile(filename){
 		var combinedKey = track.toString()+sector.toString()+block.toString();
 		var arrayKey = getKeyIndex(combinedKey);
 		//delete the file data in the array
-		 _FileSystem[arrayKey] = new fsField(0,-1,-1,-1,"");
+		 _FileSystem[arrayKey] = new fsField(0,'-','-','-',"");
 		 //delete the file directory
 		 _FileSystem[currentPosition] = new fsField(0,'-','-','-',"");
 		 var storeFileKey = getStorageIndex(currentPosition);
 		 var storeDataKey = getStorageIndex(arrayKey);
-		 alert("filekey: " + storeFileKey + "storedatakey: "+storeDataKey);
 		 //remove the directory and its data
 		 localStorage.removeItem(storeFileKey);
 		 localStorage.removeItem(storeDataKey);
@@ -275,6 +275,18 @@ function topOff(data) {
         data += "-";
     }
     return data;
+}
+function listAllFiles(){ 
+	var allFiles = new Array();
+	
+    for (var key in localStorage){  
+    	var parseKey = JSON.parse(key);
+    	if(parseKey.substring(0,1)==="0"&& localStorage[key]!=null){
+    		//put the file names into an array without the data filler
+    		allFiles.push(_FileSystem[getKeyIndex(parseKey)].data.replace(/-/g, ''));
+    	}
+    }  
+    return allFiles;
 }
 //helps us convert the internal storage keys to the 
 //display keys array that is used for user display

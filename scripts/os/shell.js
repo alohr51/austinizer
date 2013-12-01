@@ -152,6 +152,7 @@ function shellInit() {
     		loadPCB.pid = pid;
     		loadPCB.startLocation = parseInt(_memoryManager.findStart());
     		loadPCB.endLocation = loadPCB.startLocation + _PartitionSize;
+    		loadPCB.location = "memory";
     		_memoryManager.storeProgram(inputArray);
     		//check to see if the memory allowed to add the program. 
     		//an example of it not allowing it to load would be due to size constraints
@@ -233,7 +234,6 @@ function shellInit() {
     		_CPU.init();
     		_RunAllMode = true;
     		_RoundRobin = true;
-    		_FCFS = true;
     		_currentPCB = readyQueue.shift();
     		_CPU.init();
     		_CPU.isExecuting = true;
@@ -377,12 +377,72 @@ this.commandList[this.commandList.length]=sc;
  };
  this.commandList[this.commandList.length]=sc;
  
+ 
+//list Files
+ sc = new ShellCommand();
+ sc.command ="ls";
+ sc.description = "- lists all filenames";
+ sc.func = function(args){
+	 _StdIn.putText("All File names: ");
+	 _StdIn.advanceLine();
+	 var files= new Array();
+	 files = _fileSystemDeviceDriver.list();
+	 for(var i = 0; i < files.length;i++){
+			 _StdIn.putText(files[i]);
+			 _StdIn.advanceLine();
+		 
+	 }
+ };
+ this.commandList[this.commandList.length]=sc;
+ 
+//set Schedule algorithim 
+ sc = new ShellCommand();
+ sc.command ="setschedule";
+ sc.description = "- set the schedule(rr,fcfs,priority)";
+ sc.func = function(args){
+	 var alg = args[0];
+	 if(alg==="rr"){
+		 _RoundRobin = true;
+		 _FCFS = false;
+		 _Priority = false;
+		 _StdIn.putText("Algorithim set to Round Robin");
+	 }
+	 else if(alg ==="fcfs"){
+		 _FCFS = true;
+		 _Priority = false;
+		 _StdIn.putText("Algorithim set to First Come First Serve");
+	 }
+	 else if(alg==="priority"){
+		 _Priority = true;
+		 _FCFS = false;
+		 _StdIn.putText("Algorithim set to Priority");
+	 }
+ };
+ this.commandList[this.commandList.length]=sc;
+ 
+//get Schedule algorithim 
+ sc = new ShellCommand();
+ sc.command ="getschedule";
+ sc.description = "- gets the current algorithim schedule";
+ sc.func = function(args){
+	 if(_RoundRobin = true){
+		 _StdIn.putText("Algorithim is set to Round Robin");
+	 }
+	 else if(_FCFS = true){
+		 _StdIn.putText("Algorithim is set to First Come First Serve");
+	 }
+	 else if(_Priority = true){
+		 _StdIn.putText("Algorithim is set to Priority");
+	 }
+ };
+ this.commandList[this.commandList.length]=sc;
+ 
 //test
  sc = new ShellCommand();
  sc.command ="test";
  sc.description = "- test";
  sc.func = function(args){
-_fileSystemDeviceDriver.test();
+	 _fileSystemDeviceDriver.write("prog1","A9 00 8D 00 00 A9 00 8D 3B 00 A9 01 8D 3B 00 A9 00 8D 3C 00 A9 02 8D 3C 00 A9 01 6D 3B 00 8D 3B 00 A9 03 6D 3C 00 8D 3C 00 AC 3B 00 A2 01 FF A0 3D A2 02 FF AC 3C 00 A2 01 FF 00 00 00 20 61 6E 64 20 00");
  };
  this.commandList[this.commandList.length]=sc;
  

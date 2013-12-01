@@ -8,6 +8,7 @@ function pcb() {
     this.accum = 0;
     this.zflag=0;
     this.pid = 0;
+    this.location = " ";
     this.kill = false;
     this.finished = false;
     this.startLocation = 0; //start of program.
@@ -42,15 +43,18 @@ function addTableUpdate(){
 	var cell3=row.insertCell(2);
 	//added cell for the pc real time update in updatePcCell function
 	row.insertCell(3);
+	var cell5 = row.insertCell(4);
 	
-	if(_ProgramsStored <=3){
+	//3 programs in memory and 1 on disk
+	if(_ProgramsStored <=4){
 		cell1.innerHTML=_currentPCB.pid;
 		cell2.innerHTML=_currentPCB.startLocation;
 		cell3.innerHTML=_currentPCB.endLocation;
+		cell5.innerHTML=_currentPCB.location;
 	}
 }
 //only one that needs to be constantly updated
-function updatePcCell(pid){
+function updatePcCell(pid,location){
 	var table = document.getElementById("CurrentProgramTable");
 	for (var i = 1, row; row = table.rows[i]; i++) {
 		   //iterate through rows
@@ -61,7 +65,9 @@ function updatePcCell(pid){
 		   if(pid === tablePid){
 			   var row1 = table.rows[i];
 			   var cell4 = row1.cells[3];
+			   var cell5 = row1.cells[4];
 			   cell4.innerHTML=_currentPCB.program_counter;
+			   cell5.innerHTML=_currentPCB.location;
 		   };
 		   
 		}
