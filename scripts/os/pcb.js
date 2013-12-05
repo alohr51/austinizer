@@ -11,6 +11,7 @@ function pcb() {
     this.location = " ";
     this.kill = false;
     this.finished = false;
+    this.disk = false;
     this.startLocation = 0; //start of program.
     this.endLocation = 0; //end of program
     this.update = pcbUpdate;
@@ -105,3 +106,8 @@ function deleteTableUpdate(pid){
 		}
 	
 }
+
+pcb.prototype.toString = function pcbToString() {
+	  var pcbString = + this.pid + "," + this.startLocation + "," + this.endLocation + "," + this.program_counter+","+this.location+", isDisk: "+this.disk;
+	  return pcbString;
+	};

@@ -144,7 +144,7 @@ function shellInit() {
     		var str = inputArray[i];
     		var check = re.test(str);
     	}
-    	if(check){
+    	if(check && _ProgramsStored <=2){
     		var pid = getPid();
     		//put program into ready queue with a pid
     		var loadPCB = new pcb();
@@ -152,7 +152,7 @@ function shellInit() {
     		loadPCB.pid = pid;
     		loadPCB.startLocation = parseInt(_memoryManager.findStart());
     		loadPCB.endLocation = loadPCB.startLocation + _PartitionSize;
-    		loadPCB.location = "memory";
+    		loadPCB.location = "ready queue";
     		_memoryManager.storeProgram(inputArray);
     		//check to see if the memory allowed to add the program. 
     		//an example of it not allowing it to load would be due to size constraints
@@ -176,7 +176,27 @@ function shellInit() {
     			_StdIn.putText("This sort of Hex isn't my bag baby! Try only hex values!");
     		}
     		else{
-    		_StdIn.putText("Error: Check Hex input. Only Hex values are allowed.");
+    			if(!check){
+    				_StdIn.putText("Please check your hex code");
+    			}
+    			else{
+    				if(_isFormatted){
+    		    	var pid = getPid();
+    		    	//put program into ready queue with a pid
+    		    	var diskPCB = new pcb();
+    		    	diskPCB.pid = pid;
+    		    	diskPCB.startLocation ="";
+    		    	diskPCB.endLocation = "";
+    		    	diskPCB.location = "disk";
+    		    	diskPCB.disk = true;
+	    			_memoryManager.storeProgram(inputArray);
+	    			_StdIn.putText("program Added to disk");
+	    			readyQueue[pid]=diskPCB;
+    				}
+    				else{
+    					_StdIn.putText("Please format first");
+    				}
+    			}
     		}
     	}
     };
@@ -235,6 +255,12 @@ function shellInit() {
     		_RunAllMode = true;
     		_RoundRobin = true;
     		_currentPCB = readyQueue.shift();
+    		//place holder for prog on disk;
+//    		if(_isDisk){
+//    			var diskPCB = new pcb();
+//    			diskPCB.startLocation = -1;
+//    			readyQueue.push(diskPCB);
+//    		}
     		_CPU.init();
     		_CPU.isExecuting = true;
     		
@@ -442,7 +468,7 @@ this.commandList[this.commandList.length]=sc;
  sc.command ="test";
  sc.description = "- test";
  sc.func = function(args){
-	 _fileSystemDeviceDriver.write("prog1","A9 00 8D 00 00 A9 00 8D 3B 00 A9 01 8D 3B 00 A9 00 8D 3C 00 A9 02 8D 3C 00 A9 01 6D 3B 00 8D 3B 00 A9 03 6D 3C 00 8D 3C 00 AC 3B 00 A2 01 FF A0 3D A2 02 FF AC 3C 00 A2 01 FF 00 00 00 20 61 6E 64 20 00");
+	 localStorage.clear();
  };
  this.commandList[this.commandList.length]=sc;
  

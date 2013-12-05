@@ -33,7 +33,13 @@ function StoreProgram(args) {
 		_coreMem.set(args, _3rdMemoryStart);
 		_ProgramsStored++;
 	}
-	else if(_ProgramsStored > 2){
+	//put it on disk
+	else if(_ProgramsStored===3){
+		var filename = "prog"+_ProgramsStored;
+		 _fileSystemDeviceDriver.create(filename);
+		 _fileSystemDeviceDriver.write(filename,args);
+	}
+	else if(_ProgramsStored > 3){
 		_MemGood = false;
 		krnTrace("ERROR: all 3 memory partitions are full!");
 	}
@@ -48,6 +54,9 @@ function findStart() {
 		return _2ndMemoryStart;
 	}
 	else if(_ProgramsStored===2){
+		return _3rdMemoryStart;
+	}
+	else if(_ProgramsStored ===3){
 		return _3rdMemoryStart;
 	}
 }
