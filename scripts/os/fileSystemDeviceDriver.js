@@ -63,6 +63,8 @@ function fsInit() {
 }//end function
 
 function fsFormat() {
+	localStorage.clear();
+	this.init();
 	_isFormatted = true;
     var display = document.getElementById("fileDisplay");
     display.innerHTML = "";
@@ -81,10 +83,8 @@ function fsFormat() {
                 	row = displayfiller(getrow.toString(), "000") + "]: ";
                 	if(arrayIter<=_NumOfFileSystemRows){
                 	row = row + displayfiller(_FileSystem[arrayIter].toString(), "00") + " ";
-                	
                 	arrayIter++;
                 	}
-
                 }//end b loop
             }//end s loop
         }//end t loop
@@ -142,7 +142,7 @@ function createFile(fileName){
 	var track=dataKey.substring(0,1);
 	var sector = dataKey.substring(1,2);
 	var block = dataKey.substring(2,3);
-	var createObj = new fsField(1,track, sector,block,topOff(filename));
+	var createObj = new fsField(1,track, sector,block,topOff(fileName));
 	//alert("fileKey: "+fileKey + "dataKey: "+dataKey+"  t:"+track+"  s:"+sector+"  b: "+block);
 	localStorage.setItem(fileKey,JSON.stringify(createObj));
 	if(localStorage[fileKey]!=null){
@@ -155,7 +155,7 @@ function createFile(fileName){
 		return false;
 	}
 }
-
+//write
 function writeToFile(filename,data){
 	var track=-1;
 	var sector = -1;
@@ -163,7 +163,7 @@ function writeToFile(filename,data){
 	for(var i = 1; i < _FileSystem.length;i++){
 		if(_FileSystem[i].data.length>=1){
 			//get only the file without filler
-			var fname = _FileSystem[i].data.replace(/-/g, '');
+			var fname = _FileSystem[i].data.toString().replace(/-/g, '');
 			if(fname===filename){
 				track = _FileSystem[i].track;
 				sector= _FileSystem[i].sector;
@@ -197,7 +197,7 @@ function readFile(filename){
 	for(var i = 1; i < _FileSystem.length;i++){
 		if(_FileSystem[i].data.length>=1){
 			//get only the file without filler
-			var fname = _FileSystem[i].data.replace(/-/g, '');
+			var fname = _FileSystem[i].data.toString().replace(/-/g, '');
 			if(fname===filename){
 				track = _FileSystem[i].track;
 				sector= _FileSystem[i].sector;
@@ -236,7 +236,7 @@ function deleteFile(filename){
 	for(var i = 1; i < _FileSystem.length;i++){
 		if(_FileSystem[i].data.length>=1){
 			//get only the file without filler
-			var fname = _FileSystem[i].data.replace(/-/g, '');
+			var fname = _FileSystem[i].data.toString().replace(/-/g, '');
 			if(fname===filename){
 				currentPosition = i;
 				track = _FileSystem[i].track;
@@ -283,7 +283,7 @@ function listAllFiles(){
     	var parseKey = JSON.parse(key);
     	if(parseKey.substring(0,1)==="0"&& localStorage[key]!=null){
     		//put the file names into an array without the data filler
-    		allFiles.push(_FileSystem[getKeyIndex(parseKey)].data.replace(/-/g, ''));
+    		allFiles.push(_FileSystem[getKeyIndex(parseKey)].data.toString().replace(/-/g, ''));
     	}
     }  
     return allFiles;

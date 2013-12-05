@@ -55,3 +55,5 @@ function displayfiller(oldStr, zeroForm) {
 function peek(array) {
     if (array.length>0) return array[array.length-1];
  }
+
+
